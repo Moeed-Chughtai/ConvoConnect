@@ -7,6 +7,10 @@ android {
     namespace 'com.example.chatapp'
     compileSdk 32
 
+    buildFeatures {
+        viewBinding true
+    }
+
     defaultConfig {
         applicationId "com.example.chatapp"
         minSdk 21
@@ -40,5 +44,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.0.1')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-storage'
     implementation 'androidx.browser:browser:1.4.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class VerifyOTPActivity extends AppCompatActivity {
-
     private EditText inputCode1, inputCode2, inputCode3, inputCode4, inputCode5, inputCode6;
 
     @Override
@@ -89,7 +88,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
                                     verifyButton.setVisibility(View.INVISIBLE);
                                     // If code is correct and authentication is successful, it redirects to MainActivity
                                     if (task.isSuccessful()) {
-                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), SetupProfileActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                         // If code is incorrect, it displays code entered by user
