@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,14 +34,14 @@ public class SendOTPActivity extends AppCompatActivity {
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         Button buttonGetOTP = findViewById(R.id.getOtpButton);
 
-        // TODO: Add more country codes to drop-down menu
+        // TODO: Fix layout of dropdown spinner
         // Creating drop-down menu
-        Spinner country_codes = findViewById(R.id.country_codes);
+        Spinner countryCode = findViewById(R.id.countryCode);
         // Renders each item from array onto the screen
         // CreateFromResource(within which activity, name of stringArray, layout type)
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.country_codes, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        country_codes.setAdapter(adapter);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.country_codes, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        countryCode.setAdapter(adapter);
 
         // View is a rectangular box that responds to user inputs, eg. button, editText
         buttonGetOTP.setOnClickListener(new View.OnClickListener() {
@@ -53,12 +55,12 @@ public class SendOTPActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 buttonGetOTP.setVisibility(View.INVISIBLE);
 
+                String selectedCode = countryCode.getSelectedItem().toString();
                 // Authenticate phone number through Firebase
                 PhoneAuthOptions options =
                         PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
-                                // TODO: Repurpose for different country codes
-                                .setPhoneNumber("+44" + phoneNumberInput.getText().toString())
-                                .setTimeout(60L, TimeUnit.SECONDS)
+                                .setPhoneNumber(selectedCode + phoneNumberInput.getText().toString())
+                                .setTimeout(30L, TimeUnit.SECONDS)
                                 .setActivity(SendOTPActivity.this)
                                 .setCallbacks(
                                         new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -85,7 +87,9 @@ public class SendOTPActivity extends AppCompatActivity {
                                                 Intent intent = new Intent(getApplicationContext(), VerifyOTPActivity.class);
                                                 intent.putExtra("phoneNumber", phoneNumberInput.getText().toString());
                                                 intent.putExtra("verificationId", verificationId);
+                                                intent.putExtra("selectedCode", selectedCode);
                                                 startActivity(intent);
+                                                finish();
                                             }
                                         }
                                 )

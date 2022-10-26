@@ -26,6 +26,7 @@ import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+// TODO: Add progress bars on all activities
 public class SetupProfileActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
@@ -76,6 +77,8 @@ public class SetupProfileActivity extends AppCompatActivity {
                     return;
                 }
 
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.continueBtn.setVisibility(View.INVISIBLE);
                 if (selectedImage != null) {
                     // Create a 'Profiles' section in storage and storage profile picture
                     StorageReference reference = storage.getReference().child("Profiles").child(auth.getUid());
@@ -100,7 +103,6 @@ public class SetupProfileActivity extends AppCompatActivity {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        // TODO: Add progress bars on all activities
                                                         // Once profile is complete and data is stored, it redirects to main activity
                                                         Intent intent = new Intent(SetupProfileActivity.this, MainActivity.class);
                                                         startActivity(intent);
@@ -112,6 +114,7 @@ public class SetupProfileActivity extends AppCompatActivity {
                             }
                         }
                     });
+                // If user does not select a profile picture
                 }else {
                     String uid = auth.getUid();
                     String phone = auth.getCurrentUser().getPhoneNumber();
@@ -125,7 +128,6 @@ public class SetupProfileActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    // TODO: Add progress bars on all activities
                                     // Once profile is complete and data is stored, it redirects to main activity
                                     Intent intent = new Intent(SetupProfileActivity.this, MainActivity.class);
                                     startActivity(intent);

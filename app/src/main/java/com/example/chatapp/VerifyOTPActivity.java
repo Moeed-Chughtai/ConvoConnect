@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class VerifyOTPActivity extends AppCompatActivity {
+
     private EditText inputCode1, inputCode2, inputCode3, inputCode4, inputCode5, inputCode6;
+    private String verificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
         final Button verifyButton = findViewById(R.id.verifyButton);
 
         TextView phoneText = findViewById(R.id.phoneText);
-        phoneText.setText(String.format("+44-%s", getIntent().getStringExtra("phoneNumber")));
+        phoneText.setText(String.format(getIntent().getStringExtra("selectedCode") + "-%s", getIntent().getStringExtra("phoneNumber")));
 
         inputCode1 = findViewById(R.id.inputCode1);
         inputCode2 = findViewById(R.id.inputCode2);
@@ -48,9 +50,10 @@ public class VerifyOTPActivity extends AppCompatActivity {
         inputCode4 = findViewById(R.id.inputCode4);
         inputCode5 = findViewById(R.id.inputCode5);
         inputCode6 = findViewById(R.id.inputCode6);
+
         setupOTPInputs();
 
-        final String[] verificationId = {getIntent().getStringExtra("verificationId")};
+        verificationId = getIntent().getStringExtra("verificationId");
 
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,26 +77,26 @@ public class VerifyOTPActivity extends AppCompatActivity {
                                 inputCode5.getText().toString() +
                                 inputCode6.getText().toString();
 
-                if (verificationId[0] != null) {
+                if (verificationId != null) {
                     progressBar.setVisibility(View.VISIBLE);
                     verifyButton.setVisibility(View.INVISIBLE);
                     // Firebase verifies code entered by user
-                    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId[0], code);
+                    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, code);
                     FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 // Once verification is complete
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    verifyButton.setVisibility(View.INVISIBLE);
                                     // If code is correct and authentication is successful, it redirects to MainActivity
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(getApplicationContext(), SetupProfileActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
-                                        // If code is incorrect, it displays code entered by user
+                                    // If code is incorrect, displays error message
                                     } else {
-                                        Toast.makeText(VerifyOTPActivity.this, "The verification entered was ", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(VerifyOTPActivity.this, "Incorrect Verification Code", Toast.LENGTH_SHORT).show();
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        verifyButton.setVisibility(View.VISIBLE);
                                     }
                                 }
                             });
@@ -106,9 +109,8 @@ public class VerifyOTPActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhoneAuthOptions options =
                         PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
-                                // TODO: Repurpose for different country codes
-                                .setPhoneNumber("+44" + getIntent().getStringExtra("phoneNumber"))
-                                .setTimeout(60L, TimeUnit.SECONDS)
+                                .setPhoneNumber(getIntent().getStringExtra("selectedCode" + getIntent().getStringExtra("phoneNumber")))
+                                .setTimeout(30L, TimeUnit.SECONDS)
                                 .setActivity(VerifyOTPActivity.this)
                                 .setCallbacks(
                                         new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -116,17 +118,15 @@ public class VerifyOTPActivity extends AppCompatActivity {
                                             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                                             }
 
-                                            // Displays error message if verification fails
                                             @Override
                                             public void onVerificationFailed(@NonNull FirebaseException e) {
                                                 Toast.makeText(VerifyOTPActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
 
-                                            // Intent is an object used to request action from another activity
                                             @Override
                                             public void onCodeSent(@NonNull String newVerificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                                                // TODO: Check if resend OTP works
-                                                verificationId[0] = newVerificationId;
+                                                // TODO: Fix resend OTP
+                                                verificationId = newVerificationId;
                                                 Toast.makeText(VerifyOTPActivity.this, "OTP Sent", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -135,7 +135,6 @@ public class VerifyOTPActivity extends AppCompatActivity {
                 PhoneAuthProvider.verifyPhoneNumber(options);
             }
         });
-
     }
 
     private void setupOTPInputs() {
@@ -153,11 +152,11 @@ public class VerifyOTPActivity extends AppCompatActivity {
                     inputCode2.requestFocus();
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+
         inputCode2.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -169,11 +168,11 @@ public class VerifyOTPActivity extends AppCompatActivity {
                     inputCode3.requestFocus();
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+
         inputCode3.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -185,10 +184,10 @@ public class VerifyOTPActivity extends AppCompatActivity {
                     inputCode4.requestFocus();
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
+
         });
         inputCode4.addTextChangedListener(new TextWatcher() {
             @Override
@@ -201,10 +200,10 @@ public class VerifyOTPActivity extends AppCompatActivity {
                     inputCode5.requestFocus();
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
+
         });
         inputCode5.addTextChangedListener(new TextWatcher() {
             @Override
@@ -217,7 +216,6 @@ public class VerifyOTPActivity extends AppCompatActivity {
                     inputCode6.requestFocus();
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
