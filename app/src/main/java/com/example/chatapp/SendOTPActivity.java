@@ -25,10 +25,20 @@ import java.util.concurrent.TimeUnit;
 
 public class SendOTPActivity extends AppCompatActivity {
 
+    FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_otp);
+
+        // If user has already logged in, skip verification
+        auth = FirebaseAuth.getInstance();
+        if(auth.getCurrentUser() != null) {
+            Intent intent = new Intent(SendOTPActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         final EditText phoneNumberInput = findViewById(R.id.numberInput);
         final ProgressBar progressBar = findViewById(R.id.progressBar);
