@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.Activities;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -10,10 +10,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
 
-import com.example.chatapp.databinding.ActivitySendOtpBinding;
+import com.example.chatapp.Models.User;
 import com.example.chatapp.databinding.ActivitySetupProfileBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,8 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 // TODO: Add progress bars on all activities
 public class SetupProfileActivity extends AppCompatActivity {

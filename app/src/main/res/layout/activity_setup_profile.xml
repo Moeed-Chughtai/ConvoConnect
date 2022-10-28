@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:overScrollMode="never"
     android:scrollbars="none"
-    tools:context=".SetupProfileActivity">
+    tools:context=".Activities.SetupProfileActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

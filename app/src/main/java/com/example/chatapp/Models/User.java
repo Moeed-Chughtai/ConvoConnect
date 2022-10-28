@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.Models;
 
 // User class to store all user data
 public class User {

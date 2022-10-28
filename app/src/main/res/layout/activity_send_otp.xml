@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:overScrollMode="never"
     android:scrollbars="none"
-    tools:context=".SendOTPActivity">
+    tools:context=".Activities.SendOTPActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

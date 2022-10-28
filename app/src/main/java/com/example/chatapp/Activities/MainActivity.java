@@ -1,15 +1,17 @@
-package com.example.chatapp;
+package com.example.chatapp.Activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 import android.view.Menu;
 
+import com.example.chatapp.R;
+import com.example.chatapp.Models.User;
+import com.example.chatapp.Adapters.UsersAdapter;
 import com.example.chatapp.databinding.ActivityMainBinding;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -47,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
                 users.clear();
                 for(DataSnapshot snapshot1 : snapshot.getChildren()) {
                     User user = snapshot1.getValue(User.class);
-                    users.add(user);
+                    // Not display the user themselves in the chat options
+                    if(!user.getUid().equals(FirebaseAuth.getInstance().getUid()))
+                        users.add(user);
                 }
                 usersAdapter.notifyDataSetChanged();
             }
