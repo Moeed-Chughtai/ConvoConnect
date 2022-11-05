@@ -19,8 +19,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-// TODO: Fix Status Bar and Themes
-// TODO: Fix colour of action bar
+// TODO: Fix Status Bar (colour of 3 dots) and Themes
+// TODO: Fix colour of action bar to green
+// TODO: Send msg by pressing enter
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         binding.recyclerView.setAdapter(usersAdapter);
 
         // Check for real-time changes
-        //TODO: Try with multiple users
         database.getReference().child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

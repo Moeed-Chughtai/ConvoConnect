@@ -26,6 +26,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
+// TODO: Paste code into fields
 public class VerifyOTPActivity extends AppCompatActivity {
 
     private EditText inputCode1, inputCode2, inputCode3, inputCode4, inputCode5, inputCode6;
@@ -107,7 +108,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhoneAuthOptions options =
                         PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
-                                .setPhoneNumber(getIntent().getStringExtra("selectedCode" + getIntent().getStringExtra("phoneNumber")))
+                                .setPhoneNumber(getIntent().getStringExtra("selectedCode") + getIntent().getStringExtra("phoneNumber"))
                                 .setTimeout(30L, TimeUnit.SECONDS)
                                 .setActivity(VerifyOTPActivity.this)
                                 .setCallbacks(
@@ -123,7 +124,6 @@ public class VerifyOTPActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onCodeSent(@NonNull String newVerificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                                                // TODO: Fix resend OTP
                                                 verificationId = newVerificationId;
                                                 Toast.makeText(VerifyOTPActivity.this, "OTP Sent", Toast.LENGTH_SHORT).show();
                                             }

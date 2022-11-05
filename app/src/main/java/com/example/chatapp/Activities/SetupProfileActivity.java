@@ -22,7 +22,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-// TODO: Add progress bars on all activities
 public class SetupProfileActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
