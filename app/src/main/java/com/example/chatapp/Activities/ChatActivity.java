@@ -68,7 +68,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-        // When a user sends a msg
+        // When a user sends a message
         binding.send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

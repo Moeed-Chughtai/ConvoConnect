@@ -45,22 +45,29 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     @Override
     public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
         User user = users.get(position);
+
         String senderId = FirebaseAuth.getInstance().getUid();
+        // Unique string with sender and receiver id combined
         String senderRoom = senderId + user.getUid();
 
         // If there is a new message, update latest message and time of that message in MainActivity
         FirebaseDatabase.getInstance().getReference()
                         .child("chats")
                         .child(senderRoom)
+                        // Listens for any changes
                         .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
+                                    // Gets value of msg and time
                                     String lastMsg = snapshot.child("lastMsg").getValue(String.class);
                                     long time = snapshot.child("lastMsgTime").getValue(Long.class);
                                     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+                                    // Replaces sample data with actial data
                                     holder.binding.msgTime.setText(dateFormat.format(new Date(time)));
                                     holder.binding.lastMsg.setText(lastMsg);
+
+                                // If no current messages exist
                                 } else {
                                     holder.binding.msgTime.setText("");
                                     holder.binding.lastMsg.setText("Tap to chat");
@@ -72,9 +79,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
                             }
                         });
 
+        // Sets the name of user
         holder.binding.username.setText(user.getName());
 
+        // Loads users profile picture
         Glide.with(context).load(user.getProfilePicture())
+                // If user does not have a profile picture
                 .placeholder(R.drawable.avatar)
                 .into(holder.binding.profile);
 
@@ -83,6 +93,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ChatActivity.class);
+                // Information sent to next activity
                 intent.putExtra("name", user.getName());
                 intent.putExtra("uid", user.getUid());
                 context.startActivity(intent);
@@ -95,13 +106,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
         return users.size();
     }
 
+
     public class UsersViewHolder extends RecyclerView.ViewHolder {
 
         RowConversationBinding binding;
 
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Access all ids by binding with xml file
+            // Reference all views by binding with xml file
             binding = RowConversationBinding.bind(itemView);
         }
     }

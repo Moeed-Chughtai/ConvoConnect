@@ -63,4 +63,3 @@
         app:layout_constraintTop_toBottomOf="@+id/profile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

@@ -74,23 +74,27 @@ public class SetupProfileActivity extends AppCompatActivity {
 
                 binding.progressBar.setVisibility(View.VISIBLE);
                 binding.continueBtn.setVisibility(View.INVISIBLE);
+
                 if (selectedImage != null) {
-                    // Create a 'Profiles' section in storage and storage profile picture
+                    // Create a 'Profiles' section in storage and stores profile picture
                     StorageReference reference = storage.getReference().child("Profiles").child(auth.getUid());
                     reference.putFile(selectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                             if(task.isSuccessful()) {
+                                // Download Url of image to store as user attribute
                                 reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
+                                        // Information to store as the attributes of user class
                                         String imageUrl = uri.toString();
                                         String uid = auth.getUid();
                                         String phone = auth.getCurrentUser().getPhoneNumber();
                                         String name = binding.nameInput.getText().toString();
+                                        // Creates a user object
                                         User user = new User(uid, name, phone, imageUrl);
 
-                                        // Create a 'users' section and then a further unique section for the user in the database to store user information
+                                        // Create a 'users' section and then a further unique section for user in the database to store user data
                                         database.getReference()
                                                 .child("users")
                                                 .child(uid)
@@ -98,7 +102,7 @@ public class SetupProfileActivity extends AppCompatActivity {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        // Once profile is complete and data is stored, it redirects to main activity
+                                                        // Once data is stored, it launches main activity
                                                         Intent intent = new Intent(SetupProfileActivity.this, MainActivity.class);
                                                         startActivity(intent);
                                                         finish();
@@ -109,13 +113,14 @@ public class SetupProfileActivity extends AppCompatActivity {
                             }
                         }
                     });
+
                 // If user does not select a profile picture
                 }else {
                     String uid = auth.getUid();
                     String phone = auth.getCurrentUser().getPhoneNumber();
                     User user = new User(uid, name, phone, "No Profile Picture");
 
-                    // Create a 'users' section and then a further unique section for the user in the database to store user information
+                    // Create a 'users' section and then a further unique section for user in the database to store user data
                     database.getReference()
                             .child("users")
                             .child(uid)

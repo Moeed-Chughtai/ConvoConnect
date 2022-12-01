@@ -32,22 +32,23 @@ public class SendOTPActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_otp);
 
         // If user has already logged in, skip verification
-        /*auth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
+        // Checks if the user has already verified
         if(auth.getCurrentUser() != null) {
             Intent intent = new Intent(SendOTPActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
-        }*/
+        }
 
         final EditText phoneNumberInput = findViewById(R.id.numberInput);
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         Button buttonGetOTP = findViewById(R.id.getOtpButton);
 
-        // TODO: Fix layout of dropdown spinner
         // Creating drop-down menu
+        // Referencing spinner using id selected in xml
         Spinner countryCode = findViewById(R.id.countryCode);
-        // Renders each item from array onto the screen
-        // CreateFromResource(within which activity, name of stringArray, layout type)
+        // CreateFromResource(within which activity, name of string-array, layout type)
+        // Returns a view for each object in the string-array
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.country_codes, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         countryCode.setAdapter(adapter);

@@ -32,10 +32,14 @@ public class MessagesAdapter extends RecyclerView.Adapter{
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Differentiate the viewType
         if(viewType == SEND) {
+            // Links the item_send.xml to SendViewHolder
             View view = LayoutInflater.from(context).inflate(R.layout.item_send, parent, false);
             return new SendViewHolder(view);
+
         }else {
+            // Links the item_receive.xml to ReceiverViewHolder
             View view = LayoutInflater.from(context).inflate(R.layout.item_receive, parent, false);
             return new ReceiverViewHolder(view);
         }

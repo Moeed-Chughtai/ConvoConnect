@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 // TODO: Paste code into fields
 public class VerifyOTPActivity extends AppCompatActivity {
 
+    // Sensitive data so variables are private
     private EditText inputCode1, inputCode2, inputCode3, inputCode4, inputCode5, inputCode6;
     private String verificationId;
 
@@ -37,11 +38,14 @@ public class VerifyOTPActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_otp);
 
+        verificationId = getIntent().getStringExtra("verificationId");
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         final Button verifyButton = findViewById(R.id.verifyButton);
-
         TextView phoneText = findViewById(R.id.phoneText);
-        phoneText.setText(String.format(getIntent().getStringExtra("selectedCode") + "-%s", getIntent().getStringExtra("phoneNumber")));
+
+        // getIntent() is used to retrieve information sent by previous activity
+        phoneText.setText(String.format(getIntent().getStringExtra("selectedCode")
+                + "-%s", getIntent().getStringExtra("phoneNumber")));
 
         inputCode1 = findViewById(R.id.inputCode1);
         inputCode2 = findViewById(R.id.inputCode2);
@@ -50,9 +54,8 @@ public class VerifyOTPActivity extends AppCompatActivity {
         inputCode5 = findViewById(R.id.inputCode5);
         inputCode6 = findViewById(R.id.inputCode6);
 
-        setupOTPInputs();
 
-        verificationId = getIntent().getStringExtra("verificationId");
+        setupOTPInputs();
 
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +80,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
                                 inputCode6.getText().toString();
 
                 if (verificationId != null) {
+                    // Replace button with progress bar
                     progressBar.setVisibility(View.VISIBLE);
                     verifyButton.setVisibility(View.INVISIBLE);
                     // Firebase verifies code entered by user
@@ -89,6 +93,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
                                     // If code is correct and authentication is successful, it redirects to MainActivity
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(getApplicationContext(), SetupProfileActivity.class);
+                                        // Clears any existing tasks so the user cannot go back to this activity
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                     // If code is incorrect, displays error message
@@ -119,12 +124,15 @@ public class VerifyOTPActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onVerificationFailed(@NonNull FirebaseException e) {
+                                                // Firebase error message displayed as popup
                                                 Toast.makeText(VerifyOTPActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
 
                                             @Override
                                             public void onCodeSent(@NonNull String newVerificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                                                // The new code is the newVerificationId
                                                 verificationId = newVerificationId;
+                                                // Confirmation popup message displayed
                                                 Toast.makeText(VerifyOTPActivity.this, "OTP Sent", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -145,13 +153,14 @@ public class VerifyOTPActivity extends AppCompatActivity {
             // Only onTextChanged is required in this TextWatcher to observe the changes
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Lead to next input box after a number is entered into the current box
+                // Automatically lead to next input box after a number is entered into current box
                 if (!s.toString().trim().isEmpty()) {
                     inputCode2.requestFocus();
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {
+
             }
         });
 
