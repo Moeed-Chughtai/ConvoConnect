@@ -15,7 +15,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_picture"
             android:layout_width="220dp"
             android:layout_height="220dp"
@@ -32,47 +32,46 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="50dp"
-            android:gravity="center"
-            android:text="@string/please_enter_a_name_and_add_an_optional_profile_picture"
+        <EditText
+            android:id="@+id/nameInput"
+            android:layout_width="280dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/name"
+            android:backgroundTint="@color/green"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLength="20"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:textColor="@color/black"
-            android:textSize="14sp" />
+            android:textColorHint="@color/gray"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="60dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/nameInput"
-                android:layout_width="290dp"
-                android:layout_height="55dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:background="@drawable/textbox_outline"
-                android:hint="@string/name"
-                android:textColorHint="@color/gray"
-                android:imeOptions="actionDone"
-                android:importantForAutofill="no"
-                android:maxLength="20"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:inputType="text" />
-        </LinearLayout>
+        <EditText
+            android:id="@+id/status"
+            android:layout_width="280dp"
+            android:layout_height="55dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:hint="Status"
+            android:backgroundTint="@color/green"
+            android:textColorHint="@color/gray"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:maxLength="20"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:inputType="text" />
 
         <FrameLayout
             android:layout_width="match_parent"

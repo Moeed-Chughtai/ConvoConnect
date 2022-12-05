@@ -75,7 +75,7 @@ public class SetupProfileActivity extends AppCompatActivity {
                 binding.progressBar.setVisibility(View.VISIBLE);
                 binding.continueBtn.setVisibility(View.INVISIBLE);
 
-                if (selectedImage != null) {
+                if(selectedImage != null) {
                     // Create a 'Profiles' section in storage and stores profile picture
                     StorageReference reference = storage.getReference().child("Profiles").child(auth.getUid());
                     reference.putFile(selectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -91,8 +91,16 @@ public class SetupProfileActivity extends AppCompatActivity {
                                         String uid = auth.getUid();
                                         String phone = auth.getCurrentUser().getPhoneNumber();
                                         String name = binding.nameInput.getText().toString();
+                                        String status;
+
+                                        if(binding.status.getText().toString() == null) {
+                                            status = "Hi There!";
+                                        }else {
+                                            status = binding.status.getText().toString();
+                                        }
+
                                         // Creates a user object
-                                        User user = new User(uid, name, phone, imageUrl);
+                                        User user = new User(uid, name, status, phone, imageUrl);
 
                                         // Create a 'users' section and then a further unique section for user in the database to store user data
                                         database.getReference()
@@ -118,7 +126,15 @@ public class SetupProfileActivity extends AppCompatActivity {
                 }else {
                     String uid = auth.getUid();
                     String phone = auth.getCurrentUser().getPhoneNumber();
-                    User user = new User(uid, name, phone, "No Profile Picture");
+                    String status;
+
+                    if(binding.status.getText().toString() == null) {
+                        status = "Hi There!";
+                    }else {
+                        status = binding.status.getText().toString();
+                    }
+
+                    User user = new User(uid, name, status, phone, "No Profile Picture");
 
                     // Create a 'users' section and then a further unique section for user in the database to store user data
                     database.getReference()

@@ -4,13 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.chatapp.R;
 import com.example.chatapp.Models.User;
-import com.example.chatapp.Adapters.UsersAdapter;
+import com.example.chatapp.Adapters.ChatsAdapter;
 import com.example.chatapp.databinding.ActivityMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     FirebaseDatabase database;
     ArrayList<User> users;
-    UsersAdapter usersAdapter;
+    ChatsAdapter chatsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,26 +42,50 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         users = new ArrayList<>();
 
-        usersAdapter = new UsersAdapter(this, users);
+        chatsAdapter = new ChatsAdapter(this, users);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.setAdapter(usersAdapter);
+        binding.recyclerView.setAdapter(chatsAdapter);
 
         // Check for real-time changes
-        database.getReference().child("users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                users.clear();
-                for(DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    User user = snapshot1.getValue(User.class);
-                    // Not display the user themselves in the chat options
-                    if(!user.getUid().equals(FirebaseAuth.getInstance().getUid()))
-                        users.add(user);
-                }
-                usersAdapter.notifyDataSetChanged();
-            }
+        database.getReference()
+                .child("user_friends")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child("friends")
+                .addValueEventListener(new ValueEventListener() {
+                                           @Override
+                                           public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                               users.clear();
+                                               for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                                   User user = snapshot1.getValue(User.class);
+                                                   users.add(user);
+                                                   }
+                                               chatsAdapter.notifyDataSetChanged();
+                                               }
 
+                                           @Override
+                                           public void onCancelled(@NonNull DatabaseError error) {
+                                           }
+                                       });
+
+        BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
+        bottomNavigationView.setSelectedItemId(R.id.chats);
+
+        binding.bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.chats:
+                        return true;
+                    case R.id.find_users:
+                        startActivity(new Intent(getApplicationContext(), UsersListActivity.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                    case R.id.group_chats:
+                        startActivity(new Intent(getApplicationContext(), GroupChatActivity.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                }
+                return false;
             }
         });
     }

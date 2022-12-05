@@ -1,10 +1,13 @@
 package com.example.chatapp.Models;
 
+import java.util.ArrayList;
+
 // User class to store all user data
 public class User {
 
     // Private variables for encapsulation
     private String uid, name, status, phoneNumber, profilePicture;
+    private ArrayList<String> friends;
 
     // First constructor is empty as Firebase cannot figure out on its own what the constructor does
     // The empty constructor allows Firebase to create a new instance of the object, which it then proceeds to fill in using reflection
@@ -18,6 +21,7 @@ public class User {
         this.status = status;
         this.phoneNumber = phoneNumber;
         this.profilePicture = profilePicture;
+        this.friends = new ArrayList<>();
     }
 
     // Getters and Setters
@@ -59,5 +63,13 @@ public class User {
 
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public ArrayList<String> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(ArrayList<String> friends) {
+        this.friends = friends;
     }
 }

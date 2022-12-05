@@ -8,18 +8,18 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.chatapp.R;
-import com.example.chatapp.databinding.ActivityFriendsListBinding;
+import com.example.chatapp.databinding.ActivityGroupChatBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class FriendsListActivity extends AppCompatActivity {
+public class GroupChatActivity extends AppCompatActivity {
 
-    ActivityFriendsListBinding binding;
+    ActivityGroupChatBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityFriendsListBinding.inflate(getLayoutInflater());
+        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
@@ -35,7 +35,7 @@ public class FriendsListActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         overridePendingTransition(0,0);
                         return true;
-                    case R.id.find_users:
+                    case R.id.group_chats:
                         startActivity(new Intent(getApplicationContext(),UsersListActivity.class));
                         overridePendingTransition(0,0);
                         return true;

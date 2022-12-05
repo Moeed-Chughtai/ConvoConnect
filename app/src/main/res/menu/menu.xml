@@ -6,12 +6,11 @@
         android:title="Chats"
         android:icon="@drawable/chats"/>
     <item
-        android:id="@+id/status"
-        android:icon="@drawable/status"
-        android:title="Status" />
+        android:id="@+id/group_chats"
+        android:title="Group Chats"
+        android:icon="@drawable/friends" />
     <item
-        android:id="@+id/friends"
-        android:icon="@drawable/friends"
-        android:title="Friends" />
+        android:id="@+id/find_users"
+        android:title="Users"
+        android:icon="@drawable/search" />
 </menu>
-

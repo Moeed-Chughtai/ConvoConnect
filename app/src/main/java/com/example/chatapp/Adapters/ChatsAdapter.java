@@ -24,26 +24,26 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHolder> {
+public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHolder> {
 
     Context context;
     ArrayList<User> users;
 
     // Constructor
-    public UsersAdapter(Context context, ArrayList<User> users) {
+    public ChatsAdapter(Context context, ArrayList<User> users) {
         this.context = context;
         this.users = users;
     }
 
     @NonNull
     @Override
-    public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ChatsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_conversation, parent, false);
-        return new UsersViewHolder(view);
+        return new ChatsViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ChatsViewHolder holder, int position) {
         User user = users.get(position);
 
         String senderId = FirebaseAuth.getInstance().getUid();
@@ -107,11 +107,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     }
 
 
-    public class UsersViewHolder extends RecyclerView.ViewHolder {
+    public class ChatsViewHolder extends RecyclerView.ViewHolder {
 
         RowConversationBinding binding;
 
-        public UsersViewHolder(@NonNull View itemView) {
+        public ChatsViewHolder(@NonNull View itemView) {
             super(itemView);
             // Reference all views by binding with xml file
             binding = RowConversationBinding.bind(itemView);
