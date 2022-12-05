@@ -4,7 +4,7 @@ package com.example.chatapp.Models;
 public class User {
 
     // Private variables for encapsulation
-    private String uid, name, phoneNumber, profilePicture;
+    private String uid, name, status, phoneNumber, profilePicture;
 
     // First constructor is empty as Firebase cannot figure out on its own what the constructor does
     // The empty constructor allows Firebase to create a new instance of the object, which it then proceeds to fill in using reflection
@@ -12,9 +12,10 @@ public class User {
     }
 
     // Second constructor
-    public User(String uid, String name, String phoneNumber, String profilePicture) {
+    public User(String uid, String name, String status, String phoneNumber, String profilePicture) {
         this.uid = uid;
         this.name = name;
+        this.status = status;
         this.phoneNumber = phoneNumber;
         this.profilePicture = profilePicture;
     }
@@ -34,6 +35,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getPhoneNumber() {
