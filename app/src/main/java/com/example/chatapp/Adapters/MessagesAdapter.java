@@ -15,6 +15,7 @@ import com.example.chatapp.databinding.ItemSendBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MessagesAdapter extends RecyclerView.Adapter{
 
@@ -49,7 +50,8 @@ public class MessagesAdapter extends RecyclerView.Adapter{
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if(FirebaseAuth.getInstance().getUid().equals(message.getSenderId())) {
+        // Compares uid of current user and sender of msg
+        if(Objects.equals(FirebaseAuth.getInstance().getUid(), message.getSenderId())) {
             return SEND;
         } else {
             return RECEIVE;
@@ -61,14 +63,17 @@ public class MessagesAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
         if(holder.getClass() == SendViewHolder.class) {
+            // Must be the SendViewHolder
             SendViewHolder viewHolder = (SendViewHolder)holder;
             viewHolder.binding.message.setText(message.getMessage());
         }else {
+            // Must be ReceiveViewHolder
             ReceiverViewHolder viewHolder = (ReceiverViewHolder)holder;
             viewHolder.binding.message.setText(message.getMessage());
         }
     }
 
+    // Number of 'RecyclerView' items
     @Override
     public int getItemCount() {
         return messages.size();

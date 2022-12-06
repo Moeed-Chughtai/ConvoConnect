@@ -1,20 +1,18 @@
 package com.example.chatapp.Activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import com.example.chatapp.R;
-import com.example.chatapp.Models.User;
 import com.example.chatapp.Adapters.ChatsAdapter;
+import com.example.chatapp.Models.User;
+import com.example.chatapp.R;
 import com.example.chatapp.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -70,23 +68,20 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
         bottomNavigationView.setSelectedItemId(R.id.chats);
 
-        binding.bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.chats:
-                        return true;
-                    case R.id.find_users:
-                        startActivity(new Intent(getApplicationContext(), UsersListActivity.class));
-                        overridePendingTransition(0,0);
-                        return true;
-                    case R.id.group_chats:
-                        startActivity(new Intent(getApplicationContext(), GroupChatActivity.class));
-                        overridePendingTransition(0,0);
-                        return true;
-                }
-                return false;
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch(item.getItemId()) {
+                case R.id.chats:
+                    return true;
+                case R.id.find_users:
+                    startActivity(new Intent(getApplicationContext(), UsersListActivity.class));
+                    overridePendingTransition(0,0);
+                    return true;
+                case R.id.group_chats:
+                    startActivity(new Intent(getApplicationContext(), GroupChatListActivity.class));
+                    overridePendingTransition(0,0);
+                    return true;
             }
+            return false;
         });
     }
 

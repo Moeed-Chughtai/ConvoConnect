@@ -63,7 +63,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
                                     String lastMsg = snapshot.child("lastMsg").getValue(String.class);
                                     long time = snapshot.child("lastMsgTime").getValue(Long.class);
                                     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-                                    // Replaces sample data with actial data
+                                    // Replaces sample data with actual data
                                     holder.binding.msgTime.setText(dateFormat.format(new Date(time)));
                                     holder.binding.lastMsg.setText(lastMsg);
 
