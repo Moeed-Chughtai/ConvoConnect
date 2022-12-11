@@ -10,20 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.chatapp.Activities.SendOTPActivity;
-import com.example.chatapp.Activities.UsersListActivity;
 import com.example.chatapp.Models.User;
 import com.example.chatapp.R;
 import com.example.chatapp.databinding.UsersListBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHolder> {
 
@@ -56,25 +50,19 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
                 .placeholder(R.drawable.avatar)
                 .into(holder.binding.profile);
 
-        holder.binding.addUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uid = user.getUid();
-                // Database reference
-                database = FirebaseDatabase.getInstance().getReference();
-                database.child("user_friends")
-                        .child(FirebaseAuth.getInstance().getUid())
-                        .child("friends")
-                        .child(uid)
-                        .setValue(user)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // Notify user if successful
-                                Toast.makeText(context, "User added", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                }
+        holder.binding.addUser.setOnClickListener(view -> {
+            String uid = user.getUid();
+            // Database reference
+            database = FirebaseDatabase.getInstance().getReference();
+            database.child("user_friends")
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child("friends")
+                    .child(uid)
+                    .setValue(user)
+                    .addOnSuccessListener(unused -> {
+                        // Notify user if successful
+                        Toast.makeText(context, "User added", Toast.LENGTH_LONG).show();
+                    });
             });
         }
 

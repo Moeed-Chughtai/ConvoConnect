@@ -2,6 +2,7 @@ package com.example.chatapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +19,8 @@ public class GroupChatListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityGroupListChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // TODO: Menu item Click Event
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
         bottomNavigationView.setSelectedItemId(R.id.friends);
@@ -37,6 +40,11 @@ public class GroupChatListActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar2, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

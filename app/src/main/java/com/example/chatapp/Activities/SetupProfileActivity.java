@@ -23,8 +23,8 @@ public class SetupProfileActivity extends AppCompatActivity {
     FirebaseStorage storage;
 
     ActivitySetupProfileBinding binding;
-    ActivityResultLauncher<String> selectPicture;
 
+    ActivityResultLauncher<String> selectPicture;
     Uri selectedImage;
 
     @Override
@@ -37,7 +37,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
 
-        // Method called when user clicks profile picture avatar
+        // Launched when user clicks profile picture avatar
         selectPicture = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 result -> {
@@ -59,7 +59,7 @@ public class SetupProfileActivity extends AppCompatActivity {
             binding.progressBar.setVisibility(View.VISIBLE);
             binding.continueBtn.setVisibility(View.INVISIBLE);
 
-            if(selectedImage != null) {
+            if (selectedImage != null) {
                 // Create a 'Profiles' section in storage and stores profile picture
                 StorageReference reference = storage.getReference().child("Profiles").child(auth.getUid());
                 reference.putFile(selectedImage).addOnCompleteListener(task -> {
@@ -71,13 +71,7 @@ public class SetupProfileActivity extends AppCompatActivity {
                             String uid = auth.getUid();
                             String phone = auth.getCurrentUser().getPhoneNumber();
                             String name1 = binding.nameInput.getText().toString();
-                            String status;
-
-                            if(binding.status.getText().toString() == null) {
-                                status = "Hi There!";
-                            }else {
-                                status = binding.status.getText().toString();
-                            }
+                            String status = binding.status.getText().toString();
 
                             // Creates a user object
                             User user = new User(uid, name1, status, phone, imageUrl);
@@ -101,13 +95,7 @@ public class SetupProfileActivity extends AppCompatActivity {
             }else {
                 String uid = auth.getUid();
                 String phone = auth.getCurrentUser().getPhoneNumber();
-                String status;
-
-                if(binding.status.getText().toString() == null) {
-                    status = "Hi There!";
-                }else {
-                    status = binding.status.getText().toString();
-                }
+                String status = binding.status.getText().toString();
 
                 User user = new User(uid, name, status, phone, "No Profile Picture");
 

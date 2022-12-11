@@ -2,7 +2,7 @@ package com.example.chatapp.Models;
 
 public class Message {
 
-    private String messageId, message, senderId;
+    private String messageId, message, senderId, mediaUrl;
     private long timestamp;
 
     public Message() {
@@ -44,5 +44,13 @@ public class Message {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
     }
 }

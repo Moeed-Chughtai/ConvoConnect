@@ -12,8 +12,10 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
-            android:name=".GroupChatMessagesActivity"
-            android:exported="false">
+            android:name=".Activities.GroupChatMessagesActivity"
+            android:exported="true"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/Theme.ChatApp">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -40,7 +42,7 @@
             android:name=".Activities.ChatActivity"
             android:exported="true"
             android:screenOrientation="fullSensor"
-            android:theme="@style/Theme.ChatApp">
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -94,5 +96,4 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-
 </manifest>

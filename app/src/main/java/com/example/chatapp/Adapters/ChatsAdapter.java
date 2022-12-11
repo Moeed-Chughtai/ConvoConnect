@@ -89,15 +89,13 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
                 .into(holder.binding.profile);
 
         // If a current chat is clicked, redirects to chat activity
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ChatActivity.class);
-                // Information sent to next activity
-                intent.putExtra("name", user.getName());
-                intent.putExtra("uid", user.getUid());
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChatActivity.class);
+            // Information sent to next activity
+            intent.putExtra("name", user.getName());
+            intent.putExtra("image", user.getProfilePicture());
+            intent.putExtra("uid", user.getUid());
+            context.startActivity(intent);
         });
     }
 

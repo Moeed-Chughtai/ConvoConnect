@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chatapp.Models.Message;
 import com.example.chatapp.R;
 import com.example.chatapp.databinding.ItemReceiveBinding;
@@ -63,12 +64,32 @@ public class MessagesAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
         if(holder.getClass() == SendViewHolder.class) {
-            // Must be the SendViewHolder
             SendViewHolder viewHolder = (SendViewHolder)holder;
+            // Set imageView visible if media sent
+            if (message.getMessage().equals("media")) {
+                // Make ImageView visible and TextView gone
+                viewHolder.binding.media.setVisibility(View.VISIBLE);
+                viewHolder.binding.message.setVisibility(View.GONE);
+                // Load image
+                Glide.with(context)
+                        .load(message.getMediaUrl())
+                        // Placeholder whilst media loads
+                        .placeholder(R.drawable.placeholder)
+                        .into(viewHolder.binding.media);
+            }
             viewHolder.binding.message.setText(message.getMessage());
+
         }else {
             // Must be ReceiveViewHolder
             ReceiverViewHolder viewHolder = (ReceiverViewHolder)holder;
+            if (message.getMessage().equals("media")) {
+                viewHolder.binding.media.setVisibility(View.VISIBLE);
+                viewHolder.binding.message.setVisibility(View.GONE);
+                Glide.with(context)
+                        .load(message.getMediaUrl())
+                        .placeholder(R.drawable.placeholder)
+                        .into(viewHolder.binding.media);
+            }
             viewHolder.binding.message.setText(message.getMessage());
         }
     }

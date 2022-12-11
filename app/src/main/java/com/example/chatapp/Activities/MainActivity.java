@@ -85,6 +85,24 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // If activity is active
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String currentUser = FirebaseAuth.getInstance().getUid();
+        // Current user presence set to online
+        database.getReference().child("presence").child(currentUser).setValue("Online");
+    }
+
+    // If activity is paused
+    @Override
+    protected void onPause() {
+        super.onPause();
+        String currentUser = FirebaseAuth.getInstance().getUid();
+        // Current user presence set to offline
+        database.getReference().child("presence").child(currentUser).setValue("Offline");
+    }
+
     // Add a menu on the action bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

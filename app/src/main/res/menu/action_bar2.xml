@@ -8,6 +8,10 @@
         android:title="Search"
         app:showAsAction="always" />
     <item
+        android:id="@+id/create_gc"
+        android:icon="@drawable/create_gc"
+        android:title="Create Group Chat" />
+    <item
         android:id="@+id/friends"
         android:icon="@drawable/settings"
         android:title="Settings" />

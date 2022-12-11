@@ -62,7 +62,7 @@
             android:layout_marginEnd="20dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:hint="Status"
+            android:text="Hi There!"
             android:backgroundTint="@color/green"
             android:textColorHint="@color/gray"
             android:imeOptions="actionDone"

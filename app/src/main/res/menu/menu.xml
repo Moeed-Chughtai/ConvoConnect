@@ -12,5 +12,5 @@
     <item
         android:id="@+id/find_users"
         android:title="Users"
-        android:icon="@drawable/search" />
+        android:icon="@drawable/find_users" />
 </menu>
