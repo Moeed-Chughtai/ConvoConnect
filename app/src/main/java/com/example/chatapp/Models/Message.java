@@ -4,6 +4,7 @@ public class Message {
 
     private String messageId, message, senderId, mediaUrl;
     private long timestamp;
+    private Boolean edited = Boolean.FALSE;
 
     public Message() {
     }
@@ -52,5 +53,13 @@ public class Message {
 
     public void setMediaUrl(String mediaUrl) {
         this.mediaUrl = mediaUrl;
+    }
+
+    public Boolean getEdited() {
+        return edited;
+    }
+
+    public void setEdited(Boolean edited) {
+        this.edited = edited;
     }
 }

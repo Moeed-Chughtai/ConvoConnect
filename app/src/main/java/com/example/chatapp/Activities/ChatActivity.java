@@ -59,8 +59,15 @@ public class ChatActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
 
+        receiverUid = getIntent().getStringExtra("uid");
+        senderUid = FirebaseAuth.getInstance().getUid();
+
+        // Create unique identifiers between the senders and receivers
+        senderRoom = senderUid + receiverUid;
+        receiverRoom = receiverUid + senderUid;
+
         messages = new ArrayList<>();
-        adapter = new MessagesAdapter(this, messages);
+        adapter = new MessagesAdapter(this, messages, senderRoom, receiverRoom);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
@@ -80,9 +87,6 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         // Back arrow returns to MainActivity
         binding.imageView2.setOnClickListener(view -> finish());
-
-        receiverUid = getIntent().getStringExtra("uid");
-        senderUid = FirebaseAuth.getInstance().getUid();
 
         // Check if receiver had a presence
         database.getReference().child("presence").child(receiverUid).addValueEventListener(new ValueEventListener() {
@@ -107,11 +111,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
-
-        // Create unique identifiers between the senders and receivers
-        senderRoom = senderUid + receiverUid;
-        receiverRoom = receiverUid + senderUid;
 
         dialog = new ProgressDialog(this);
         dialog.setMessage("Uploading media...");
@@ -153,7 +152,8 @@ public class ChatActivity extends AppCompatActivity {
                 HashMap<String, Object> lastMsgObj = new HashMap<>();
                 lastMsgObj.put("lastMsg", message.getMessage());
                 lastMsgObj.put("lastMsgTime", date.getTime());
-                database.getReference().child("chats")
+                database.getReference()
+                        .child("chats")
                         .child(senderRoom)
                         .updateChildren(lastMsgObj);
                 database.getReference().child("chats")
@@ -161,15 +161,16 @@ public class ChatActivity extends AppCompatActivity {
                         .updateChildren(lastMsgObj);
 
                 // Storing message in the sender and receivers sections in the database
-                database.getReference().child("chats")
+                database.getReference()
+                        .child("chats")
                         .child(senderRoom)
                         .child("messages")
-                        .push()
+                        .child(String.valueOf(date.getTime()))
                         .setValue(message).addOnSuccessListener(aVoid -> database.getReference()
                                 .child("chats")
                                 .child(receiverRoom)
                                 .child("messages")
-                                .push()
+                        .child(String.valueOf(date.getTime()))
                                 .setValue(message).addOnSuccessListener(aVoid1 -> {
                                 }));
             }
@@ -217,12 +218,12 @@ public class ChatActivity extends AppCompatActivity {
                                     database.getReference().child("chats")
                                             .child(senderRoom)
                                             .child("messages")
-                                            .push()
+                                            .child(String.valueOf(date.getTime()))
                                             .setValue(message).addOnSuccessListener(aVoid -> database.getReference()
                                                     .child("chats")
                                                     .child(receiverRoom)
                                                     .child("messages")
-                                                    .push()
+                                            .child(String.valueOf(date.getTime()))
                                                     .setValue(message).addOnSuccessListener(aVoid1 -> {
                                                     }));
                                 });
