@@ -25,7 +25,7 @@
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="31dp"
+                android:layout_width="0dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
@@ -64,8 +64,16 @@
                     android:textColor="@color/black"
                     android:visibility="gone" />
             </LinearLayout>
-        </LinearLayout>
 
+            <ImageView
+                android:id="@+id/remove"
+                android:layout_width="35dp"
+                android:layout_height="42dp"
+                android:layout_gravity="end"
+                android:layout_marginStart="200dp"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/remove" />
+        </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.cardview.widget.CardView
@@ -117,7 +125,6 @@
                 android:layout_weight="0"
                 app:srcCompat="@drawable/camera" />
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView

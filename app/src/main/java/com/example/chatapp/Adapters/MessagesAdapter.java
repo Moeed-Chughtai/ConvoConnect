@@ -111,10 +111,12 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                 viewHolder.binding.edited.setVisibility(View.GONE);
                 viewHolder.binding.delete.setVisibility(View.GONE);
             } else {
-                viewHolder.binding.message.setVisibility(View.VISIBLE);
-                viewHolder.binding.deleted.setVisibility(View.GONE);
-                // Only show text is not deleted
-                viewHolder.binding.message.setText(message.getMessage());
+                if (!message.getMessage().equals("media")) {
+                    viewHolder.binding.message.setVisibility(View.VISIBLE);
+                    viewHolder.binding.deleted.setVisibility(View.GONE);
+                    // Only show text if not deleted
+                    viewHolder.binding.message.setText(message.getMessage());
+                }
             }
 
             // If edit button clicked
@@ -188,10 +190,12 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                 viewHolder.binding.message.setVisibility(View.GONE);
                 viewHolder.binding.deleted.setVisibility(View.VISIBLE);
             } else {
-                viewHolder.binding.message.setVisibility(View.VISIBLE);
-                viewHolder.binding.deleted.setVisibility(View.GONE);
-                // Only show text is not deleted
-                viewHolder.binding.message.setText(message.getMessage());
+                if (!message.getMessage().equals("media")) {
+                    viewHolder.binding.message.setVisibility(View.VISIBLE);
+                    viewHolder.binding.deleted.setVisibility(View.GONE);
+                    // Only show text if not deleted
+                    viewHolder.binding.message.setText(message.getMessage());
+                }
             }
         }
     }

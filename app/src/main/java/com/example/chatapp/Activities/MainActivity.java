@@ -50,20 +50,21 @@ public class MainActivity extends AppCompatActivity {
                 .child(FirebaseAuth.getInstance().getUid())
                 .child("friends")
                 .addValueEventListener(new ValueEventListener() {
-                                           @Override
-                                           public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                               users.clear();
-                                               for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                                   User user = snapshot1.getValue(User.class);
-                                                   users.add(user);
-                                                   }
-                                               chatsAdapter.notifyDataSetChanged();
-                                               }
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        users.clear();
+                        for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                            User user = snapshot1.getValue(User.class);
+                            users.add(user);
+                        }
+                        chatsAdapter.notifyDataSetChanged();
+                    }
 
-                                           @Override
-                                           public void onCancelled(@NonNull DatabaseError error) {
-                                           }
-                                       });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
         bottomNavigationView.setSelectedItemId(R.id.chats);

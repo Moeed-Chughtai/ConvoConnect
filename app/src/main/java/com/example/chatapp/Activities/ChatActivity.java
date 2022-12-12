@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -118,7 +119,8 @@ public class ChatActivity extends AppCompatActivity {
         dialog.setCancelable(false);
 
         // Listener on senders msg location
-        database.getReference().child("chats")
+        database.getReference()
+                .child("chats")
                 .child(senderRoom)
                 .child("messages")
                 .addValueEventListener(new ValueEventListener() {
@@ -260,6 +262,20 @@ public class ChatActivity extends AppCompatActivity {
                     database.getReference().child("presence").child(senderUid).setValue("Online");
                 }
             };
+        });
+
+        // If remove clicked
+        binding.remove.setOnClickListener(view -> {
+            // Remove node of friend under friends of current user
+            database.getReference()
+                    .child("user_friends")
+                    .child(FirebaseAuth.getInstance().getUid())
+                    .child("friends")
+                    .child(receiverUid)
+                    .removeValue();
+            // Return to MainActivity
+            finish();
+            Toast.makeText(ChatActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
         });
     }
 

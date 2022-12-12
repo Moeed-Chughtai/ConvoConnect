@@ -1,7 +1,5 @@
 package com.example.chatapp.Models;
 
-import java.util.ArrayList;
-
 // User class to store all user data
 public class User {
 

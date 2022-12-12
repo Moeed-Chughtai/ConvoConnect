@@ -2,6 +2,7 @@ package com.example.chatapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -49,8 +51,7 @@ public class UsersListActivity extends AppCompatActivity {
                         for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                             User user = snapshot1.getValue(User.class);
                             if (!user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
-                                users.add(user);
-                                /*DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
+                                DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
                                 databaseRef1.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -61,29 +62,25 @@ public class UsersListActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     if (!snapshot.hasChild(user.getUid())) {
-                                                        Toast.makeText(UsersListActivity.this, "Yes", Toast.LENGTH_LONG).show();
                                                         users.add(user);
-
+                                                        usersAdapter.notifyDataSetChanged();
                                                     }
                                                 }
-
                                                 @Override
                                                 public void onCancelled(@NonNull DatabaseError error) {
                                                 }
                                             });
                                         }else {
                                             users.add(user);
-
+                                            usersAdapter.notifyDataSetChanged();
                                         }
                                     }
-
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
                                     }
-                                });*/
+                                });
                             }
                         }
-                        usersAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -92,20 +89,28 @@ public class UsersListActivity extends AppCompatActivity {
                 });
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
-        bottomNavigationView.setSelectedItemId(R.id.group_chats);
+        bottomNavigationView.setSelectedItemId(R.id.friends);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()) {
-                case R.id.group_chats:
+                case R.id.friends:
                     return true;
                 case R.id.chats:
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     overridePendingTransition(0,0);
-                case R.id.friends:
+                    return true;
+                case R.id.group_chats:
                     startActivity(new Intent(getApplicationContext(), GroupChatListActivity.class));
                     overridePendingTransition(0,0);
+                    return true;
             }
             return false;
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

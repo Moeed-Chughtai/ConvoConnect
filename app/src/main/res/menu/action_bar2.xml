@@ -3,14 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/search"
-        android:title="Search"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/create_gc"
         android:icon="@drawable/create_gc"
-        android:title="Create Group Chat" />
+        android:title="Create Group Chat"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/friends"
         android:icon="@drawable/settings"
