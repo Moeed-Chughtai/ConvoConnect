@@ -185,10 +185,17 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                         .into(viewHolder.binding.media);
             }
 
+            if (message.getEdited().equals(Boolean.TRUE)) {
+                viewHolder.binding.edited.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.binding.edited.setVisibility(View.GONE);
+            }
+
             if (message.getMessage().equals("deleted")) {
                 // Replace TextView if msg is deleted
                 viewHolder.binding.message.setVisibility(View.GONE);
                 viewHolder.binding.deleted.setVisibility(View.VISIBLE);
+                viewHolder.binding.edited.setVisibility(View.GONE);
             } else {
                 if (!message.getMessage().equals("media")) {
                     viewHolder.binding.message.setVisibility(View.VISIBLE);
@@ -207,7 +214,7 @@ public class MessagesAdapter extends RecyclerView.Adapter{
     }
 
 
-    public class SendViewHolder extends RecyclerView.ViewHolder {
+    public static class SendViewHolder extends RecyclerView.ViewHolder {
 
         ItemSendBinding binding;
 
@@ -217,7 +224,7 @@ public class MessagesAdapter extends RecyclerView.Adapter{
         }
     }
 
-    public class ReceiverViewHolder extends RecyclerView.ViewHolder {
+    public static class ReceiverViewHolder extends RecyclerView.ViewHolder {
 
         ItemReceiveBinding binding;
 

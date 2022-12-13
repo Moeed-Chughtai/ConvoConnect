@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 public class SendOTPActivity extends AppCompatActivity {
 
-    ActivitySendOtpBinding binding;
     FirebaseAuth auth;
+    ActivitySendOtpBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,6 @@ public class SendOTPActivity extends AppCompatActivity {
 
         // If user has already logged in, skip verification
         auth = FirebaseAuth.getInstance();
-        // Checks if the user has already verified
         if(auth.getCurrentUser() != null) {
             Intent intent = new Intent(SendOTPActivity.this, MainActivity.class);
             startActivity(intent);
@@ -41,8 +40,7 @@ public class SendOTPActivity extends AppCompatActivity {
         }
 
         // Creating drop-down menu
-        // Referencing spinner using id selected in xml
-        Spinner countryCode = findViewById(R.id.countryCode);
+        Spinner countryCode = binding.countryCode;
         // CreateFromResource(within which activity, name of string-array, layout type)
         // Returns a view for each object in the string-array
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.country_codes, R.layout.spinner_item);
@@ -51,7 +49,6 @@ public class SendOTPActivity extends AppCompatActivity {
 
         // View is a rectangular box that responds to user inputs
         binding.getOtpButton.setOnClickListener(v -> {
-            // Display message if field is empty
             if(binding.numberInput.getText().toString().trim().isEmpty()) {
                 Toast.makeText(SendOTPActivity.this, "Enter Phone Number", Toast.LENGTH_SHORT).show();
                 return;

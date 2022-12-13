@@ -21,9 +21,10 @@ import java.util.ArrayList;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHolder> {
 
+    DatabaseReference database;
+
     Context context;
     ArrayList<User> users;
-    DatabaseReference database;
 
     public UsersAdapter(Context context, ArrayList<User> users) {
         this.context = context;
@@ -72,7 +73,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     }
 
 
-    public class UsersViewHolder extends RecyclerView.ViewHolder {
+    public static class UsersViewHolder extends RecyclerView.ViewHolder {
 
         UsersListBinding binding;
 

@@ -42,7 +42,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="560dp"
+            android:layout_height="400dp"
             tools:listitem="@layout/users_list" />
 
         <Button

@@ -19,4 +19,3 @@ public class GroupChat {
         this.name = name;
     }
 }
-

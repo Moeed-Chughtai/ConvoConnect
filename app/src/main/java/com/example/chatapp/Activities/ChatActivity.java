@@ -40,16 +40,15 @@ public class ChatActivity extends AppCompatActivity {
 
     ActivityChatBinding binding;
     MessagesAdapter adapter;
-
     ArrayList<Message> messages;
+
     String senderRoom, receiverRoom;
+    String senderUid;
+    String receiverUid;
 
     ProgressDialog dialog;
     ActivityResultLauncher<String> selectMedia;
     Uri selectedMedia;
-
-    String senderUid;
-    String receiverUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public class ChatActivity extends AppCompatActivity {
         // Information from previous activity
         String name = getIntent().getStringExtra("name");
         String profileImage = getIntent().getStringExtra("image");
-        // Set name and image
+
         binding.name.setText(name);
         Glide.with(ChatActivity.this)
                 .load(profileImage)
@@ -89,34 +88,36 @@ public class ChatActivity extends AppCompatActivity {
         // Back arrow returns to MainActivity
         binding.imageView2.setOnClickListener(view -> finish());
 
-        // Check if receiver had a presence
-        database.getReference().child("presence").child(receiverUid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // Presence of msg receiver
-                    String status = snapshot.getValue(String.class);
-                    // Set status and make visible under name if not empty
-                    if (!status.isEmpty()) {
-                        if (status.equals("Offline")) {
-                            binding.status.setVisibility(View.GONE);
-                        } else {
-                            binding.status.setText(status);
-                            binding.status.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
         dialog = new ProgressDialog(this);
         dialog.setMessage("Uploading media...");
-        // Prevent it closing if clicked
         dialog.setCancelable(false);
+
+        // Check if receiver had a presence
+        database.getReference()
+                .child("presence")
+                .child(receiverUid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Presence of message receiver
+                            String status = snapshot.getValue(String.class);
+                            // Set status and make visible under name if offline
+                            if (!status.isEmpty()) {
+                                if (status.equals("Offline")) {
+                                    binding.status.setVisibility(View.GONE);
+                                } else {
+                                    binding.status.setText(status);
+                                    binding.status.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
 
         // Listener on senders msg location
         database.getReference()
@@ -127,7 +128,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         messages.clear();
-                        // Add all msgs including new ones
+                        // Add all messages
                         for(DataSnapshot snapshot1 : snapshot.getChildren()) {
                             Message message = snapshot1.getValue(Message.class);
                             messages.add(message);
@@ -142,7 +143,6 @@ public class ChatActivity extends AppCompatActivity {
 
         // When a user sends a message
         binding.send.setOnClickListener(v -> {
-            // Check if empty message is being sent
             if (!binding.messageBox.getText().toString().isEmpty()) {
                 String messageTxt = binding.messageBox.getText().toString();
                 Date date = new Date();
@@ -162,7 +162,7 @@ public class ChatActivity extends AppCompatActivity {
                         .child(receiverRoom)
                         .updateChildren(lastMsgObj);
 
-                // Storing message in the sender and receivers sections in the database
+                // Store message in the sender and receivers sections in the database
                 database.getReference()
                         .child("chats")
                         .child(senderRoom)

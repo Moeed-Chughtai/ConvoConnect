@@ -18,9 +18,9 @@ import com.google.firebase.storage.StorageReference;
 
 public class SetupProfileActivity extends AppCompatActivity {
 
-    FirebaseAuth auth;
     FirebaseDatabase database;
     FirebaseStorage storage;
+    FirebaseAuth auth;
 
     ActivitySetupProfileBinding binding;
 
@@ -33,9 +33,9 @@ public class SetupProfileActivity extends AppCompatActivity {
         binding = ActivitySetupProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         // Launched when user clicks profile picture avatar
         selectPicture = registerForActivityResult(

@@ -17,7 +17,6 @@ import com.example.chatapp.Models.User;
 import com.example.chatapp.R;
 import com.example.chatapp.databinding.GroupReceiveBinding;
 import com.example.chatapp.databinding.GroupSendBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,21 +26,24 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
+// Similar to MessagesAdapter
 public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
 
     FirebaseDatabase database;
 
     Context context;
     ArrayList<Message> messages;
+    String name;
 
     final int SEND = 1;
     final int RECEIVE = 2;
 
     private String editedMessage;
 
-    public GroupChatMessagesAdapter(Context context, ArrayList<Message> messages) {
+    public GroupChatMessagesAdapter(Context context, ArrayList<Message> messages, String name) {
         this.context = context;
         this.messages = messages;
+        this.name = name;
     }
 
     @NonNull
@@ -77,6 +79,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
             if (message.getMessage().equals("media")) {
                 viewHolder.binding.media.setVisibility(View.VISIBLE);
                 viewHolder.binding.message.setVisibility(View.GONE);
+                viewHolder.binding.linearLayout2.setVisibility(View.GONE);
                 Glide.with(context)
                         .load(message.getMediaUrl())
                         .placeholder(R.drawable.placeholder)
@@ -107,25 +110,22 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
             }
 
             viewHolder.binding.edit.setOnClickListener(view -> {
+                // Display popup
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle("Enter edited message: ");
-                // EditText displayed within the builder
                 final EditText input = new EditText(view.getContext());
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
-                // OK button once user is done
                 builder.setPositiveButton("OK", (dialogInterface, i) -> {
-                    // Get text from input
                     editedMessage = input.getText().toString();
-                    // Make sure edit is not empty
 
                     if (!editedMessage.equals("")) {
-                        // Update message object
                         message.setEdited(Boolean.TRUE);
                         message.setMessage(editedMessage);
                         // Update message object in database
                         database.getReference()
                                 .child("group_chat_messages")
+                                .child(name)
                                 .child(String.valueOf(message.getTimestamp()))
                                 .setValue(message)
                                 .addOnSuccessListener(unused -> {
@@ -139,28 +139,12 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                 message.setMessage("deleted");
                 database.getReference()
                         .child("group_chat_messages")
+                        .child(name)
                         .child(String.valueOf(message.getTimestamp()))
                         .setValue(message)
                         .addOnSuccessListener(unused -> {
                         });
             });
-
-            database.getReference()
-                    .child("users")
-                    .child(message.getSenderId())
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                User user = snapshot.getValue(User.class);
-                                //viewHolder.binding.name.setText(user.getName());
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
 
         } else {
             ReceiverViewHolder viewHolder = (ReceiverViewHolder)holder;
@@ -174,9 +158,16 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                         .into(viewHolder.binding.media);
             }
 
+            if (message.getEdited().equals(Boolean.TRUE)) {
+                viewHolder.binding.edited.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.binding.edited.setVisibility(View.GONE);
+            }
+
             if (message.getMessage().equals("deleted")) {
                 viewHolder.binding.message.setVisibility(View.GONE);
                 viewHolder.binding.deleted.setVisibility(View.VISIBLE);
+                viewHolder.binding.edited.setVisibility(View.GONE);
             } else {
                 if (!message.getMessage().equals("media")) {
                     viewHolder.binding.message.setVisibility(View.VISIBLE);
@@ -193,7 +184,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
                                 User user = snapshot.getValue(User.class);
-                                // viewHolder.binding.name.setText(user.getName());
+                                viewHolder.binding.name.setText(user.getName());
                             }
                         }
 
@@ -201,8 +192,6 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
                     });
-
-            viewHolder.binding.message.setText(message.getMessage());
         }
     }
 

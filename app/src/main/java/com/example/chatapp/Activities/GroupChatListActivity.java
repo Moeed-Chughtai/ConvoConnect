@@ -2,13 +2,11 @@ package com.example.chatapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,7 +20,6 @@ import com.example.chatapp.Models.GroupChat;
 import com.example.chatapp.Models.User;
 import com.example.chatapp.R;
 import com.example.chatapp.databinding.ActivityGroupChatListBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,8 +31,9 @@ import java.util.ArrayList;
 
 public class GroupChatListActivity extends AppCompatActivity {
 
-    ActivityGroupChatListBinding binding;
     FirebaseDatabase database;
+
+    ActivityGroupChatListBinding binding;
 
     BuilderAdapter builderAdapter;
     ArrayList<User> users;
@@ -56,6 +54,7 @@ public class GroupChatListActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(groupChatListAdapter);
 
+        // Event Listener on group chats
         database.getReference()
                 .child("group_chats")
                 .addValueEventListener(new ValueEventListener() {
@@ -64,6 +63,7 @@ public class GroupChatListActivity extends AppCompatActivity {
                         chats.clear();
                         for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                             GroupChat groupChat = snapshot1.getValue(GroupChat.class);
+                            // Checks if current user is a member of the group chat
                             database.getReference()
                                     .child("group_chat_users")
                                     .child(groupChat.getName())
@@ -72,8 +72,8 @@ public class GroupChatListActivity extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                                 User user = snapshot1.getValue(User.class);
+                                                // If the id of the current user is one of the group chat ids
                                                 if (user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
-                                                    Toast.makeText(GroupChatListActivity.this, "Yes", Toast.LENGTH_SHORT).show();
                                                     chats.add(groupChat);
                                                     groupChatListAdapter.notifyDataSetChanged();
                                                 }
@@ -123,7 +123,6 @@ public class GroupChatListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        // If group chat 'ImageView' clicked
         if (id == R.id.create_gc) {
             // Builder function
             createNewDialog();
@@ -148,18 +147,19 @@ public class GroupChatListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(dialogBuilder.getContext()));
         recyclerView.setAdapter(builderAdapter);
 
-        // Check for changes in the database {prototype version}
+        // Only display friends of current user
         database.getReference()
-                .child("users")
+                .child("user_friends")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child("friends")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         users.clear();
                         for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                             User user = snapshot1.getValue(User.class);
-                            if (!user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
-                                users.add(user);
-                            }
+                            users.add(user);
+
                         }
                         builderAdapter.notifyDataSetChanged();
                     }
@@ -172,13 +172,17 @@ public class GroupChatListActivity extends AppCompatActivity {
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
 
+        // Once continue clicked
         continueBtn.setOnClickListener(view -> {
             String groupChatName = name.getText().toString();
+            // Make sure a name is selected
             if(groupChatName.isEmpty()) {
                 name.setError("Please Enter a Name");
                 return;
             }
+            // Group chat object
             GroupChat groupChat = new GroupChat(groupChatName);
+            // Find all users under the temp node
             database.getReference()
                     .child("temp")
                     .child(FirebaseAuth.getInstance().getUid())
@@ -187,17 +191,22 @@ public class GroupChatListActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 User user = snapshot1.getValue(User.class);
+                                // Store the group chat object in group_chats
                                 database.getReference()
                                         .child("group_chats")
                                         .child(groupChatName)
                                         .setValue(groupChat)
                                         .addOnSuccessListener(unused -> {
                                         });
+
+                                // For each user, delete their temp node
                                 database.getReference()
                                         .child("temp")
                                         .child(FirebaseAuth.getInstance().getUid())
                                         .child(user.getUid())
                                         .removeValue();
+
+                                // For each user, add them to the group chat
                                 database.getReference()
                                         .child("group_chat_users")
                                         .child(groupChatName)
@@ -206,6 +215,34 @@ public class GroupChatListActivity extends AppCompatActivity {
                                         .addOnSuccessListener(unused -> {
                                         });
                             }
+
+                            // Get current user
+                            database.getReference()
+                                    .child("users")
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            // Iterate all users
+                                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                                User user = snapshot1.getValue(User.class);
+                                                // If the user id equals the current user id
+                                                if (user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
+                                                    // Store current user
+                                                    database.getReference()
+                                                            .child("group_chat_users")
+                                                            .child(groupChatName)
+                                                            .child(user.getUid())
+                                                            .setValue(user)
+                                                            .addOnSuccessListener(unused -> {
+                                                            });
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                        }
+                                    });
                         }
 
                         @Override

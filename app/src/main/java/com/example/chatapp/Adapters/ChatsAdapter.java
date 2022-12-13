@@ -105,7 +105,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
     }
 
 
-    public class ChatsViewHolder extends RecyclerView.ViewHolder {
+    public static class ChatsViewHolder extends RecyclerView.ViewHolder {
 
         RowConversationBinding binding;
 

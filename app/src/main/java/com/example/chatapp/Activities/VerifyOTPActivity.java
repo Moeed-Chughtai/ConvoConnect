@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chatapp.R;
 import com.example.chatapp.databinding.ActivityVerifyOtpBinding;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,8 +21,10 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import java.util.concurrent.TimeUnit;
 
 public class VerifyOTPActivity extends AppCompatActivity {
-    // Sensitive data so variables are private
+
     ActivityVerifyOtpBinding binding;
+
+    // Sensitive data so variables are private
     private EditText inputCode1, inputCode2, inputCode3, inputCode4, inputCode5, inputCode6;
     private String verificationId;
 
@@ -34,12 +35,12 @@ public class VerifyOTPActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         verificationId = getIntent().getStringExtra("verificationId");
-        inputCode1 = findViewById(R.id.inputCode1);
-        inputCode2 = findViewById(R.id.inputCode2);
-        inputCode3 = findViewById(R.id.inputCode3);
-        inputCode4 = findViewById(R.id.inputCode4);
-        inputCode5 = findViewById(R.id.inputCode5);
-        inputCode6 = findViewById(R.id.inputCode6);
+        inputCode1 = binding.inputCode1;
+        inputCode2 = binding.inputCode2;
+        inputCode3 = binding.inputCode3;
+        inputCode4 = binding.inputCode4;
+        inputCode5 = binding.inputCode5;
+        inputCode6 = binding.inputCode6;
 
         binding.phoneText.setText(String.format(getIntent().getStringExtra("selectedCode")
                 + "-%s", getIntent().getStringExtra("phoneNumber")));
@@ -57,6 +58,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
                 Toast.makeText(VerifyOTPActivity.this, "Please enter valid code", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             // String containing 6 digit code
             String code =
                     inputCode1.getText().toString() +
@@ -91,7 +93,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.resendOTP).setOnClickListener(v -> {
+        binding.resendOTP.setOnClickListener(v -> {
             PhoneAuthOptions options =
                     PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
                             .setPhoneNumber(getIntent().getStringExtra("selectedCode") + getIntent().getStringExtra("phoneNumber"))

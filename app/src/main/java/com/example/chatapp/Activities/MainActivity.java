@@ -21,15 +21,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-// TODO: Fix Status Bar (colour of 3 dots) and Themes
-// TODO: Fix colour of action bar to green
-// TODO: Send msg by pressing enter
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
     FirebaseDatabase database;
-    ArrayList<User> users;
+
+    ActivityMainBinding binding;
     ChatsAdapter chatsAdapter;
+    ArrayList<User> users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +36,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         database = FirebaseDatabase.getInstance();
-        users = new ArrayList<>();
 
+        users = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(this, users);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(chatsAdapter);
 
-        // Check for real-time changes
+        // Check for friends of user
         database.getReference()
                 .child("user_friends")
                 .child(FirebaseAuth.getInstance().getUid())

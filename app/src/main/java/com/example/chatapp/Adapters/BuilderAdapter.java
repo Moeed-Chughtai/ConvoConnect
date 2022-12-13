@@ -47,15 +47,14 @@ public class BuilderAdapter extends RecyclerView.Adapter<BuilderAdapter.BuilderV
                 .placeholder(R.drawable.avatar)
                 .into(holder.binding.profile);
 
+        // Add user to temp until group chat created with a name
         holder.binding.addUser.setOnClickListener(view -> {
             database = FirebaseDatabase.getInstance().getReference();
             database.child("temp")
                     .child(FirebaseAuth.getInstance().getUid())
                     .child(user.getUid())
                     .setValue(user)
-                    .addOnSuccessListener(unused -> {
-                        Toast.makeText(context, "User added", Toast.LENGTH_LONG).show();
-                    });
+                    .addOnSuccessListener(unused -> Toast.makeText(context, "User added", Toast.LENGTH_LONG).show());
         });
     }
 
@@ -65,7 +64,7 @@ public class BuilderAdapter extends RecyclerView.Adapter<BuilderAdapter.BuilderV
     }
 
 
-    public class BuilderViewHolder extends RecyclerView.ViewHolder {
+    public static class BuilderViewHolder extends RecyclerView.ViewHolder {
 
         UsersListBinding binding;
 

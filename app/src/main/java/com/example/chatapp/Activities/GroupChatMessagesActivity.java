@@ -24,6 +24,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class GroupChatMessagesActivity extends AppCompatActivity {
 
@@ -47,12 +48,13 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
 
+        String name = getIntent().getStringExtra("name");
+
         messages = new ArrayList<>();
-        adapter = new GroupChatMessagesAdapter(this, messages);
+        adapter = new GroupChatMessagesAdapter(this, messages, name);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
-        String name = getIntent().getStringExtra("name");
         binding.name.setText(name);
 
         setSupportActionBar(binding.toolbar);
@@ -63,7 +65,10 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
         dialog.setMessage("Uploading media...");
         dialog.setCancelable(false);
 
-        database.getReference().child("group_chat_messages")
+        // Event listener at messages location
+        database.getReference()
+                .child("group_chat_messages")
+                .child(name)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -71,6 +76,7 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
                         for(DataSnapshot snapshot1 : snapshot.getChildren()) {
                             Message message = snapshot1.getValue(Message.class);
                             message.setMessageId(snapshot1.getKey());
+                            // Add all messages
                             messages.add(message);
                         }
                         adapter.notifyDataSetChanged();
@@ -89,15 +95,19 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
                 Message message = new Message(messageTxt, FirebaseAuth.getInstance().getUid(), date.getTime());
                 binding.messageBox.setText("");
 
-                /*HashMap<String, Object> lastMsgObj = new HashMap<>();
+                // Dictionary with latest message
+                HashMap<String, Object> lastMsgObj = new HashMap<>();
                 lastMsgObj.put("lastMsg", message.getMessage());
                 lastMsgObj.put("lastMsgTime", date.getTime());
+                // Update latest message in database
                 database.getReference()
-                        .child("group_chat_messages")
-                        .updateChildren(lastMsgObj);*/
+                        .child("group_chat_latest_message")
+                        .child(name)
+                        .updateChildren(lastMsgObj);
 
                 database.getReference()
                         .child("group_chat_messages")
+                        .child(name)
                         .child(String.valueOf(date.getTime()))
                         .setValue(message)
                         .addOnSuccessListener(unused -> {
@@ -111,11 +121,8 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
                     selectedMedia = result;
 
                     if (selectedMedia != null) {
-                        // Time used for unique node
                         Calendar calendar = Calendar.getInstance();
-                        // Upload media to storage
                         StorageReference reference = storage.getReference().child("Group_Chats").child(calendar.getTimeInMillis() + "");
-                        // Give user information
                         dialog.show();
                         reference.putFile(selectedMedia).addOnCompleteListener(task -> {
                             dialog.dismiss();
@@ -130,15 +137,17 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
                                     message.setMessage("media");
                                     message.setMediaUrl(filePath);
 
-                                    /*HashMap<String, Object> lastMsgObj = new HashMap<>();
+                                    HashMap<String, Object> lastMsgObj = new HashMap<>();
                                     lastMsgObj.put("lastMsg", message.getMessage());
                                     lastMsgObj.put("lastMsgTime", date.getTime());
                                     database.getReference()
-                                            .child("group_chat_messages")
-                                            .updateChildren(lastMsgObj);*/
+                                            .child("group_chat_latest_message")
+                                            .child(name)
+                                            .updateChildren(lastMsgObj);
 
                                     database.getReference()
                                             .child("group_chat_messages")
+                                            .child(name)
                                             .child(String.valueOf(date.getTime()))
                                             .setValue(message)
                                             .addOnSuccessListener(unused -> {
@@ -150,7 +159,6 @@ public class GroupChatMessagesActivity extends AppCompatActivity {
                 }
         );
 
-        // Open file - includes all types (images and videos)
         binding.attachment.setOnClickListener(v -> selectMedia.launch("*/*"));
     }
 }

@@ -24,10 +24,11 @@ import java.util.ArrayList;
 
 public class UsersListActivity extends AppCompatActivity {
 
-    ActivityUsersListBinding binding;
     FirebaseDatabase database;
-    ArrayList<User> users;
+
+    ActivityUsersListBinding binding;
     UsersAdapter usersAdapter;
+    ArrayList<User> users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +37,14 @@ public class UsersListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         database = FirebaseDatabase.getInstance();
-        users = new ArrayList<>();
 
+        users = new ArrayList<>();
         usersAdapter = new UsersAdapter(this, users);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(usersAdapter);
 
+        // Find all users
+        // Want to show users that are not friends of current user
         database.getReference()
                 .child("users")
                 .addValueEventListener(new ValueEventListener() {
@@ -55,13 +58,16 @@ public class UsersListActivity extends AppCompatActivity {
                                 databaseRef1.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        // If user_friends node exists
                                         if (snapshot.hasChild("user_friends")) {
                                             DatabaseReference databaseRef2 = FirebaseDatabase.getInstance()
                                                     .getReference("user_friends/" + FirebaseAuth.getInstance().getUid() + "/friends");
                                             databaseRef2.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    // If user is NOT a friend of the current user
                                                     if (!snapshot.hasChild(user.getUid())) {
+                                                        // Add user
                                                         users.add(user);
                                                         usersAdapter.notifyDataSetChanged();
                                                     }
@@ -71,6 +77,7 @@ public class UsersListActivity extends AppCompatActivity {
                                                 }
                                             });
                                         }else {
+                                            // User has no friends so add all users
                                             users.add(user);
                                             usersAdapter.notifyDataSetChanged();
                                         }
