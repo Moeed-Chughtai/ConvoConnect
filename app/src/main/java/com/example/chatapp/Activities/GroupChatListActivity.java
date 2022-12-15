@@ -126,6 +126,9 @@ public class GroupChatListActivity extends AppCompatActivity {
         if (id == R.id.create_gc) {
             // Builder function
             createNewDialog();
+        } else if (id == R.id.settings) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
