@@ -22,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class MessagesAdapter extends RecyclerView.Adapter{
+public class MessagesAdapter extends RecyclerView.Adapter {
 
     FirebaseDatabase database;
 
@@ -45,25 +45,26 @@ public class MessagesAdapter extends RecyclerView.Adapter{
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Differentiate the viewType
+        // Differentiate the viewType as there is the send and receive views
         if(viewType == SEND) {
-            // Links the item_send.xml to SendViewHolder
+            // Links the send sample design to SendViewHolder
             View view = LayoutInflater.from(context).inflate(R.layout.item_send, parent, false);
             return new SendViewHolder(view);
 
         }else {
-            // Links the item_receive.xml to ReceiverViewHolder
+            // Links the receive sample design to ReceiverViewHolder
             View view = LayoutInflater.from(context).inflate(R.layout.item_receive, parent, false);
             return new ReceiverViewHolder(view);
         }
     }
 
-    // There are 2 different views so this method is used to determine which is required
+    // There are 2 different views so this determine which is required
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        // Compares uid of current user and sender of msg
+        // Compares uid of current user and to uid of the sender of message
         if(Objects.equals(FirebaseAuth.getInstance().getUid(), message.getSenderId())) {
+            // If same, it must have been sent by the current user
             return SEND;
         } else {
             return RECEIVE;
@@ -85,7 +86,6 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                 viewHolder.binding.message.setVisibility(View.GONE);
                 // Set edit and delete TextViews gone
                 viewHolder.binding.linearLayout2.setVisibility(View.GONE);
-                // Load image
                 Glide.with(context)
                         .load(message.getMediaUrl())
                         // Placeholder whilst media loads
@@ -119,7 +119,6 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                 }
             }
 
-            // If edit button clicked
             viewHolder.binding.edit.setOnClickListener(view -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle("Enter edited message: ");
@@ -131,7 +130,6 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                 builder.setPositiveButton("OK", (dialogInterface, i) -> {
                     // Get text from input
                     editedMessage = input.getText().toString();
-                    // Make sure edit is not empty
 
                     if (!editedMessage.equals("")) {
                         // Update message object
@@ -155,10 +153,9 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                 builder.show();
             });
 
-            // If delete button clicked
             viewHolder.binding.delete.setOnClickListener(view -> {
                 message.setMessage("deleted");
-                // update database so I can recognise deleted msgs
+                // Identify deleted messages and remove them from database
                 database.getReference()
                         .child("chats")
                         .child(senderRoom)
@@ -185,6 +182,7 @@ public class MessagesAdapter extends RecyclerView.Adapter{
                         .into(viewHolder.binding.media);
             }
 
+            // Replace TextView with edited if message is edited
             if (message.getEdited().equals(Boolean.TRUE)) {
                 viewHolder.binding.edited.setVisibility(View.VISIBLE);
             } else {
@@ -192,7 +190,7 @@ public class MessagesAdapter extends RecyclerView.Adapter{
             }
 
             if (message.getMessage().equals("deleted")) {
-                // Replace TextView if msg is deleted
+                // Replace TextView with deleted message if deleted
                 viewHolder.binding.message.setVisibility(View.GONE);
                 viewHolder.binding.deleted.setVisibility(View.VISIBLE);
                 viewHolder.binding.edited.setVisibility(View.GONE);
@@ -207,7 +205,6 @@ public class MessagesAdapter extends RecyclerView.Adapter{
         }
     }
 
-    // Number of 'RecyclerView' items
     @Override
     public int getItemCount() {
         return messages.size();
@@ -218,6 +215,7 @@ public class MessagesAdapter extends RecyclerView.Adapter{
 
         ItemSendBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public SendViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = ItemSendBinding.bind(itemView);
@@ -228,6 +226,7 @@ public class MessagesAdapter extends RecyclerView.Adapter{
 
         ItemReceiveBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public ReceiverViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = ItemReceiveBinding.bind(itemView);

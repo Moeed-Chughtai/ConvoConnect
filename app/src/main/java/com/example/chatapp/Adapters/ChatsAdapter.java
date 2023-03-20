@@ -29,7 +29,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
     Context context;
     ArrayList<User> users;
 
-    // Constructor
     public ChatsAdapter(Context context, ArrayList<User> users) {
         this.context = context;
         this.users = users;
@@ -38,6 +37,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
     @NonNull
     @Override
     public ChatsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Links the sample design to the ChatsViewHolder
         View view = LayoutInflater.from(context).inflate(R.layout.row_conversation, parent, false);
         return new ChatsViewHolder(view);
     }
@@ -47,14 +47,14 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
         User user = users.get(position);
 
         String senderId = FirebaseAuth.getInstance().getUid();
-        // Unique string with sender and receiver id combined
+        // Unique string with sender and receiver ids combined
         String senderRoom = senderId + user.getUid();
 
         // If there is a new message, update latest message and time of that message in MainActivity
         FirebaseDatabase.getInstance().getReference()
                         .child("chats")
                         .child(senderRoom)
-                        // Listens for any changes
+                        // Listener for new messages
                         .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -79,16 +79,13 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
                             }
                         });
 
-        // Sets the name of user
         holder.binding.username.setText(user.getName());
-
-        // Loads users profile picture
         Glide.with(context).load(user.getProfilePicture())
                 // If user does not have a profile picture
                 .placeholder(R.drawable.avatar)
                 .into(holder.binding.profile);
 
-        // If a current chat is clicked, redirects to chat activity
+        // If a current chat is clicked, request to load the relevant chat
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChatActivity.class);
             // Information sent to next activity
@@ -109,9 +106,9 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsViewHol
 
         RowConversationBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public ChatsViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Reference all views by binding with xml file
             binding = RowConversationBinding.bind(itemView);
         }
     }

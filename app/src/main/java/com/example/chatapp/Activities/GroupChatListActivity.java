@@ -51,10 +51,11 @@ public class GroupChatListActivity extends AppCompatActivity {
 
         chats = new ArrayList<>();
         groupChatListAdapter = new GroupChatListAdapter(this, chats);
+        // Link recyclerView to groupChatListAdapter
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(groupChatListAdapter);
 
-        // Event Listener on group chats
+        // Listener on group chats section in database
         database.getReference()
                 .child("group_chats")
                 .addValueEventListener(new ValueEventListener() {
@@ -75,6 +76,7 @@ public class GroupChatListActivity extends AppCompatActivity {
                                                 // If the id of the current user is one of the group chat ids
                                                 if (user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
                                                     chats.add(groupChat);
+                                                    // Updates adapter with list of group chats that the user is in
                                                     groupChatListAdapter.notifyDataSetChanged();
                                                 }
                                             }
@@ -92,10 +94,10 @@ public class GroupChatListActivity extends AppCompatActivity {
                     }
                 });
 
-
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
         bottomNavigationView.setSelectedItemId(R.id.group_chats);
 
+        // If user switches to different activity using navigation menu
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.group_chats:
@@ -178,7 +180,6 @@ public class GroupChatListActivity extends AppCompatActivity {
         // Once continue clicked
         continueBtn.setOnClickListener(view -> {
             String groupChatName = name.getText().toString();
-            // Make sure a name is selected
             if(groupChatName.isEmpty()) {
                 name.setError("Please Enter a Name");
                 return;

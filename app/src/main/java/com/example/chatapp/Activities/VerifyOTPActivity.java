@@ -24,7 +24,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
 
     ActivityVerifyOtpBinding binding;
 
-    // Sensitive data so variables are private
+    // Private variables for sensitive data
     private EditText inputCode1, inputCode2, inputCode3, inputCode4, inputCode5, inputCode6;
     private String verificationId;
 
@@ -35,6 +35,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         verificationId = getIntent().getStringExtra("verificationId");
+        // Define the 6 input fields
         inputCode1 = binding.inputCode1;
         inputCode2 = binding.inputCode2;
         inputCode3 = binding.inputCode3;
@@ -42,13 +43,13 @@ public class VerifyOTPActivity extends AppCompatActivity {
         inputCode5 = binding.inputCode5;
         inputCode6 = binding.inputCode6;
 
+        // Country code plus phone number string
         binding.phoneText.setText(String.format(getIntent().getStringExtra("selectedCode")
                 + "-%s", getIntent().getStringExtra("phoneNumber")));
 
         setupOTPInputs();
 
         binding.verifyButton.setOnClickListener(v -> {
-            // If any text fields are not entered correctly, a message is displayed
             if (inputCode1.getText().toString().trim().isEmpty()
                     || inputCode2.getText().toString().trim().isEmpty()
                     || inputCode3.getText().toString().trim().isEmpty()
@@ -59,7 +60,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
                 return;
             }
 
-            // String containing 6 digit code
+            // String with 6 digit code entered by user
             String code =
                     inputCode1.getText().toString() +
                             inputCode2.getText().toString() +
@@ -69,18 +70,15 @@ public class VerifyOTPActivity extends AppCompatActivity {
                             inputCode6.getText().toString();
 
             if (verificationId != null) {
-                // Replace button with progress bar
                 binding.progressBar.setVisibility(View.VISIBLE);
                 binding.verifyButton.setVisibility(View.INVISIBLE);
                 // Firebase verifies code entered by user
                 PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, code);
-                // Once verification is complete
                 FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
                         .addOnCompleteListener(task -> {
-                            // If code is correct and authentication is successful, it redirects to MainActivity
+                            // If code is correct, it requests to launch MainActivity
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(getApplicationContext(), SetupProfileActivity.class);
-                                // Clears any existing tasks so the user cannot go back to this activity
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                             // If code is incorrect, displays error message
@@ -93,6 +91,7 @@ public class VerifyOTPActivity extends AppCompatActivity {
             }
         });
 
+        // If resend button clicked
         binding.resendOTP.setOnClickListener(v -> {
             PhoneAuthOptions options =
                     PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
@@ -107,15 +106,13 @@ public class VerifyOTPActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onVerificationFailed(@NonNull FirebaseException e) {
-                                            // Firebase error message displayed as popup
                                             Toast.makeText(VerifyOTPActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
 
                                         @Override
                                         public void onCodeSent(@NonNull String newVerificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                                            // The new code is the newVerificationId
+                                            // Verification Id updated with new code
                                             verificationId = newVerificationId;
-                                            // Confirmation popup message displayed
                                             Toast.makeText(VerifyOTPActivity.this, "OTP Sent", Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -126,16 +123,16 @@ public class VerifyOTPActivity extends AppCompatActivity {
     }
 
     private void setupOTPInputs() {
-        // This code will repeat 6 times for every input box
+        // Code repeated for each input field
         inputCode1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
-            // Only onTextChanged is required in this TextWatcher to observe the changes
+            // Observe changes in the field
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Automatically lead to next input box after a number is entered into current box
+                // Automatically switch to next input box after a number is entered into current box
                 if (!s.toString().trim().isEmpty()) {
                     inputCode2.requestFocus();
                 }

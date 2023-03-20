@@ -62,6 +62,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <!-- Dropdown menu with all country codes -->
             <Spinner
                 android:id="@+id/countryCode"
                 android:layout_width="wrap_content"
@@ -86,6 +87,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- Line to split the input field from the button -->
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -94,6 +96,7 @@
             android:layout_marginEnd="70dp"
             android:background="@color/black" />
 
+        <!-- Views can be displayed on top of each other -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

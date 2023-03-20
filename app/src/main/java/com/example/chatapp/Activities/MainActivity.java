@@ -40,10 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
         users = new ArrayList<>();
         chatsAdapter = new ChatsAdapter(this, users);
+        // Link recyclerView to ChatsAdapter
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(chatsAdapter);
 
-        // Check for friends of user
+        // Listener on friends of current user
         database.getReference()
                 .child("user_friends")
                 .child(FirebaseAuth.getInstance().getUid())
@@ -56,18 +57,19 @@ public class MainActivity extends AppCompatActivity {
                             User user = snapshot1.getValue(User.class);
                             users.add(user);
                         }
+                        // Update adapter with all friends
                         chatsAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
 
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
         bottomNavigationView.setSelectedItemId(R.id.chats);
 
+        // If user switches to different activity using navigation menu
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.chats:

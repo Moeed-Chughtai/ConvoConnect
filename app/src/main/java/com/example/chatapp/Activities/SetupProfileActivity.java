@@ -37,16 +37,16 @@ public class SetupProfileActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // Launched when user clicks profile picture avatar
         selectPicture = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 result -> {
-                    // Set and display the new profile picture
+                    // Display selected picture
                     binding.profilePicture.setImageURI(result);
                     selectedImage = result;
                 }
         );
 
+        // User clicks profile picture avatar
         binding.profilePicture.setOnClickListener(v -> selectPicture.launch("image/*"));
 
         binding.continueBtn.setOnClickListener(v -> {
@@ -64,7 +64,7 @@ public class SetupProfileActivity extends AppCompatActivity {
                 StorageReference reference = storage.getReference().child("Profiles").child(auth.getUid());
                 reference.putFile(selectedImage).addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {
-                        // Download Url of image to store as user attribute
+                        // Url of image stored as attribute for user object
                         reference.getDownloadUrl().addOnSuccessListener(uri -> {
                             // Information to store as the attributes of user class
                             String imageUrl = uri.toString();
@@ -73,10 +73,10 @@ public class SetupProfileActivity extends AppCompatActivity {
                             String name1 = binding.nameInput.getText().toString();
                             String status = binding.status.getText().toString();
 
-                            // Creates a user object
+                            // User object
                             User user = new User(uid, name1, status, phone, imageUrl);
 
-                            // Create a 'users' section and then a further unique section for user in the database to store user data
+                            // Create a 'users' section and then a further unique section for user and stores user object
                             database.getReference()
                                     .child("users")
                                     .child(uid)
@@ -97,15 +97,16 @@ public class SetupProfileActivity extends AppCompatActivity {
                 String phone = auth.getCurrentUser().getPhoneNumber();
                 String status = binding.status.getText().toString();
 
+                // User object
                 User user = new User(uid, name, status, phone, "No Profile Picture");
 
-                // Create a 'users' section and then a further unique section for user in the database to store user data
+                // Create a 'users' section and then a further unique section for user and stores user object
                 database.getReference()
                         .child("users")
                         .child(uid)
                         .setValue(user)
                         .addOnSuccessListener(aVoid -> {
-                            // Once profile is complete and data is stored, it redirects to main activity
+                            // Requests to launch MainActivity
                             Intent intent = new Intent(SetupProfileActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();

@@ -62,12 +62,13 @@ public class ChatActivity extends AppCompatActivity {
         receiverUid = getIntent().getStringExtra("uid");
         senderUid = FirebaseAuth.getInstance().getUid();
 
-        // Create unique identifiers between the senders and receivers
+        // Create unique identifiers between the sender and receiver
         senderRoom = senderUid + receiverUid;
         receiverRoom = receiverUid + senderUid;
 
         messages = new ArrayList<>();
         adapter = new MessagesAdapter(this, messages, senderRoom, receiverRoom);
+        // Link recyclerView to MessagesAdapter
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
@@ -85,14 +86,14 @@ public class ChatActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         // Remove app title
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        // Back arrow returns to MainActivity
+        // Back arrow returns to chat menu
         binding.imageView2.setOnClickListener(view -> finish());
 
         dialog = new ProgressDialog(this);
         dialog.setMessage("Uploading media...");
         dialog.setCancelable(false);
 
-        // Check if receiver had a presence
+        // Check if receiver has a presence
         database.getReference()
                 .child("presence")
                 .child(receiverUid)
@@ -102,7 +103,7 @@ public class ChatActivity extends AppCompatActivity {
                         if (snapshot.exists()) {
                             // Presence of message receiver
                             String status = snapshot.getValue(String.class);
-                            // Set status and make visible under name if offline
+                            // Set status under name but make invisible if offline
                             if (!status.isEmpty()) {
                                 if (status.equals("Offline")) {
                                     binding.status.setVisibility(View.GONE);
@@ -119,7 +120,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-        // Listener on senders msg location
+        // Listener on senders section to wait for new messages
         database.getReference()
                 .child("chats")
                 .child(senderRoom)
@@ -128,11 +129,12 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         messages.clear();
-                        // Add all messages
+                        // Add all messages to list
                         for(DataSnapshot snapshot1 : snapshot.getChildren()) {
                             Message message = snapshot1.getValue(Message.class);
                             messages.add(message);
                         }
+                        // Update adapter with list
                         adapter.notifyDataSetChanged();
                     }
 
@@ -141,19 +143,22 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-        // When a user sends a message
+        // When a user clicks the send button
         binding.send.setOnClickListener(v -> {
             if (!binding.messageBox.getText().toString().isEmpty()) {
+                // Retrieve text entered by user
                 String messageTxt = binding.messageBox.getText().toString();
                 Date date = new Date();
+                // Create message object
                 Message message = new Message(messageTxt, senderUid, date.getTime());
-                // clears the message box
                 binding.messageBox.setText("");
 
-                // Store last message and time of message to display on MainActivity
+                // Store latest message and time of message to display in chat menu
                 HashMap<String, Object> lastMsgObj = new HashMap<>();
                 lastMsgObj.put("lastMsg", message.getMessage());
                 lastMsgObj.put("lastMsgTime", date.getTime());
+
+                // Store message in the senders section in the database
                 database.getReference()
                         .child("chats")
                         .child(senderRoom)
@@ -162,7 +167,7 @@ public class ChatActivity extends AppCompatActivity {
                         .child(receiverRoom)
                         .updateChildren(lastMsgObj);
 
-                // Store message in the sender and receivers sections in the database
+                // Store message receivers section in the database
                 database.getReference()
                         .child("chats")
                         .child(senderRoom)
@@ -178,7 +183,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-
+        // User clicks media button
         selectMedia = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 result -> {
@@ -186,26 +191,29 @@ public class ChatActivity extends AppCompatActivity {
                     selectedMedia = result;
 
                     if (selectedMedia != null) {
-                        // Time used for unique node
+                        // Time used for unique node to store media
                         Calendar calendar = Calendar.getInstance();
                         // Upload media to storage
-                        StorageReference reference = storage.getReference().child("Chats").child(calendar.getTimeInMillis() + "");
-                        // Give user information
+                        StorageReference reference = storage.getReference()
+                                .child("Chats")
+                                .child(calendar.getTimeInMillis() + "");
+                        // Popup to tell user media is uploading
                         dialog.show();
                         reference.putFile(selectedMedia).addOnCompleteListener(task -> {
                             dialog.dismiss();
                             if (task.isSuccessful()) {
                                 reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    // Convert the path of the media in storage to a string
                                     String filePath = uri.toString();
 
-                                    // Store media in database
+                                    // Create message object
                                     String messageTxt = binding.messageBox.getText().toString();
                                     Date date = new Date();
                                     Message message = new Message(messageTxt, senderUid, date.getTime());
                                     message.setMessage("media");
                                     message.setMediaUrl(filePath);
 
-                                    // Store last message and time of message to display in MainActivity
+                                    // Store latest message and time of message to display in chat menu
                                     HashMap<String, Object> lastMsgObj = new HashMap<>();
                                     lastMsgObj.put("lastMsg", message.getMessage());
                                     lastMsgObj.put("lastMsgTime", date.getTime());
@@ -216,7 +224,7 @@ public class ChatActivity extends AppCompatActivity {
                                             .child(receiverRoom)
                                             .updateChildren(lastMsgObj);
 
-                                    // Storing message in the sender and receivers sections in the database
+                                    // Store message in the senders and receivers section in the database
                                     database.getReference().child("chats")
                                             .child(senderRoom)
                                             .child("messages")
@@ -235,11 +243,11 @@ public class ChatActivity extends AppCompatActivity {
                 }
         );
 
-        // Open file - includes all types (images and videos)
+        // Open media on the device which displays all pictures and videos
         binding.attachment.setOnClickListener(v -> selectMedia.launch("*/*"));
 
         final Handler handler = new Handler();
-        // Look for change in message box to change presence to typing
+        // Look for change in message box to change status to typing
         binding.messageBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -249,12 +257,16 @@ public class ChatActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+            // Called if anything typed into message box
             @Override
             public void afterTextChanged(Editable editable) {
-                database.getReference().child("presence").child(senderUid).setValue("typing...");
+                database.getReference()
+                        .child("presence")
+                        .child(senderUid)
+                        .setValue("typing...");
                 handler.removeCallbacksAndMessages(null);
-                // Change back to online if user doesn't type for 1 min
-                handler.postDelayed(userStoppedTyping, 1000);
+                // Change back to online if user doesn't type for 2 seconds
+                handler.postDelayed(userStoppedTyping, 2000);
             }
             final Runnable userStoppedTyping = new Runnable() {
                 @Override
@@ -264,16 +276,15 @@ public class ChatActivity extends AppCompatActivity {
             };
         });
 
-        // If remove clicked
+        // If remove button clicked
         binding.remove.setOnClickListener(view -> {
-            // Remove node of friend under friends of current user
+            // Remove node of friend under list of friends of user
             database.getReference()
                     .child("user_friends")
                     .child(FirebaseAuth.getInstance().getUid())
                     .child("friends")
                     .child(receiverUid)
                     .removeValue();
-            // Return to MainActivity
             finish();
             Toast.makeText(ChatActivity.this, "Friend removed", Toast.LENGTH_SHORT).show();
         });
@@ -283,7 +294,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         String currentUser = FirebaseAuth.getInstance().getUid();
-        // Current user presence set to online
+        // Current user presence set to online in database
         database.getReference().child("presence").child(currentUser).setValue("Online");
     }
 
@@ -291,6 +302,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         String currentUser = FirebaseAuth.getInstance().getUid();
+        // Current user presence set to offline in database
         database.getReference().child("presence").child(currentUser).setValue("Offline");
     }
 }

@@ -34,26 +34,26 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     @NonNull
     @Override
     public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // links the users_list.xml to the UsersViewHolder
+        // Links the sample design to the UsersViewHolder
         View view = LayoutInflater.from(context).inflate(R.layout.users_list, parent, false);
         return new UsersViewHolder(view);
     }
 
-    // Sets the actual data
+    // Sets the actual data for the RecyclerView
     @Override
     public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
         User user = users.get(position);
 
-        // Replaces sample data with actual data using binding
+        // Replaces sample data with actual data
         holder.binding.username.setText(user.getName());
         holder.binding.status.setText(user.getStatus());
         Glide.with(context).load(user.getProfilePicture())
                 .placeholder(R.drawable.avatar)
                 .into(holder.binding.profile);
-
         holder.binding.addUser.setOnClickListener(view -> {
             String uid = user.getUid();
-            // Database reference
+
+            // Adds user to current users friend
             database = FirebaseDatabase.getInstance().getReference();
             database.child("user_friends")
                     .child(FirebaseAuth.getInstance().getUid())
@@ -77,6 +77,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
         UsersListBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public UsersViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = UsersListBinding.bind(itemView);

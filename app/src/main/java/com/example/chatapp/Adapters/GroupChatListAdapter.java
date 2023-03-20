@@ -35,6 +35,7 @@ public class GroupChatListAdapter extends RecyclerView.Adapter<GroupChatListAdap
     @NonNull
     @Override
     public GroupChatListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Links the sample design to the GroupChatListViewHolder
         View view = LayoutInflater.from(context).inflate(R.layout.row_conversation, parent, false);
         return new GroupChatListViewHolder(view);
     }
@@ -44,10 +45,10 @@ public class GroupChatListAdapter extends RecyclerView.Adapter<GroupChatListAdap
         GroupChat groupChat = chats.get(position);
         holder.binding.username.setText(groupChat.getName());
 
-        // Location of latest message and time
         FirebaseDatabase.getInstance().getReference()
                         .child("group_chat_latest_message")
                         .child(groupChat.getName())
+                        // Retrieve latest message and time of message
                         .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -56,12 +57,11 @@ public class GroupChatListAdapter extends RecyclerView.Adapter<GroupChatListAdap
                                     long time = snapshot.child("lastMsgTime").getValue(Long.class);
                                     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
                                     // Replaces sample data with actual data
-                                    // Bind to RecyclerView
                                     holder.binding.msgTime.setText(dateFormat.format(new Date(time)));
                                     holder.binding.lastMsg.setText(lastMsg);
 
                                 } else {
-                                    // If no messages yet sent, set default
+                                    // If no current messages exist
                                     holder.binding.msgTime.setText("");
                                     holder.binding.lastMsg.setText("Tap to chat");
                                 }
@@ -72,7 +72,7 @@ public class GroupChatListAdapter extends RecyclerView.Adapter<GroupChatListAdap
                             }
                         });
 
-        // If a group chat is clicked
+        // If a group chat is clicked, request to load the relevant chat
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, GroupChatMessagesActivity.class);
             intent.putExtra("name", groupChat.getName());
@@ -90,6 +90,7 @@ public class GroupChatListAdapter extends RecyclerView.Adapter<GroupChatListAdap
 
         RowConversationBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public GroupChatListViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = RowConversationBinding.bind(itemView);

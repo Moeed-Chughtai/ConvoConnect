@@ -41,11 +41,12 @@ public class UsersListActivity extends AppCompatActivity {
 
         users = new ArrayList<>();
         usersAdapter = new UsersAdapter(this, users);
+        // Link recyclerView to UsersAdapter
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(usersAdapter);
 
         // Find all users
-        // Want to show users that are not friends of current user
+        // Want to only display users that are NOT friends of current user
         database.getReference()
                 .child("users")
                 .addValueEventListener(new ValueEventListener() {
@@ -54,21 +55,22 @@ public class UsersListActivity extends AppCompatActivity {
                         users.clear();
                         for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                             User user = snapshot1.getValue(User.class);
+                            // Finds current user
                             if (!user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
                                 DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
                                 databaseRef1.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        // If user_friends node exists
+                                        // If user_friends node exists for current user
                                         if (snapshot.hasChild("user_friends")) {
                                             DatabaseReference databaseRef2 = FirebaseDatabase.getInstance()
                                                     .getReference("user_friends/" + FirebaseAuth.getInstance().getUid() + "/friends");
-                                            databaseRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    databaseRef2.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     // If user is NOT a friend of the current user
                                                     if (!snapshot.hasChild(user.getUid())) {
-                                                        // Add user
+                                                        // Add user to list of users that need to be displayed in users section
                                                         users.add(user);
                                                         usersAdapter.notifyDataSetChanged();
                                                     }
@@ -78,7 +80,7 @@ public class UsersListActivity extends AppCompatActivity {
                                                 }
                                             });
                                         }else {
-                                            // User has no friends so add all users
+                                            // User has no friends so add all users to list
                                             users.add(user);
                                             usersAdapter.notifyDataSetChanged();
                                         }
@@ -99,6 +101,7 @@ public class UsersListActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = binding.bottomNavigationView;
         bottomNavigationView.setSelectedItemId(R.id.friends);
 
+        // If user switches to different activity using navigation menu
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.friends:

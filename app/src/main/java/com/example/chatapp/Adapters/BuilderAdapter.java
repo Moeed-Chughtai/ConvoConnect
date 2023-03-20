@@ -33,21 +33,24 @@ public class BuilderAdapter extends RecyclerView.Adapter<BuilderAdapter.BuilderV
     @NonNull
     @Override
     public BuilderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Links the sample design to the BuilderViewHolder
         View view = LayoutInflater.from(context).inflate(R.layout.users_list, parent, false);
         return new BuilderViewHolder(view);
     }
 
+    // Sets the actual data for the RecyclerView
     @Override
     public void onBindViewHolder(@NonNull BuilderViewHolder holder, int position) {
         User user = users.get(position);
 
+        // Replaces sample data with actual data
         holder.binding.username.setText(user.getName());
         holder.binding.status.setText(user.getStatus());
         Glide.with(context).load(user.getProfilePicture())
                 .placeholder(R.drawable.avatar)
                 .into(holder.binding.profile);
 
-        // Add user to temp until group chat created with a name
+        // Add user to temp until group chat created
         holder.binding.addUser.setOnClickListener(view -> {
             database = FirebaseDatabase.getInstance().getReference();
             database.child("temp")
@@ -68,6 +71,7 @@ public class BuilderAdapter extends RecyclerView.Adapter<BuilderAdapter.BuilderV
 
         UsersListBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public BuilderViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = UsersListBinding.bind(itemView);

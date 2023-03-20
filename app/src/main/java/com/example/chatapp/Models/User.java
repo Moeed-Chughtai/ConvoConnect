@@ -1,13 +1,12 @@
 package com.example.chatapp.Models;
 
-// User class to store all user data
 public class User {
 
     // Private variables for encapsulation
     private String uid, name, status, phoneNumber, profilePicture;
 
-    // First constructor is empty as Firebase cannot figure out on its own what the constructor does
-    // The empty constructor allows Firebase to create a new instance of the object, which it then proceeds to fill in using reflection
+    /* - First constructor is empty as Firebase cannot figure out on its own what the constructor does
+       - This allows Firebase to create a new instance of the object, which it then proceeds to fill in using reflection */
     public User() {
     }
 

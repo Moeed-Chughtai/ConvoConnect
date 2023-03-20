@@ -32,9 +32,9 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         binding.arrow.setOnClickListener(view -> finish());
 
+        // Change name
         binding.nameChangeBtn.setOnClickListener(view -> {
             String nameChange = binding.nameChange.getText().toString();
-            // Ensure name not empty
             if(nameChange.isEmpty()) {
                 binding.nameChangeBtn.setError("Please Enter a Name");
                 return;
@@ -49,9 +49,9 @@ public class SettingsActivity extends AppCompatActivity {
                                 User user = snapshot1.getValue(User.class);
                                 // If the user id equals the current user id
                                 if (user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
-                                    // Update user class
+                                    // Update user object with new name
                                     user.setName(nameChange);
-                                    // Update database
+                                    // Update database with updated user object
                                     database.getReference()
                                             .child("users")
                                             .child(FirebaseAuth.getInstance().getUid())
@@ -66,10 +66,11 @@ public class SettingsActivity extends AppCompatActivity {
                     });
         });
 
+        /// Change status
         binding.statusChangeBtn.setOnClickListener(view -> {
             String statusChange = binding.statusChange.getText().toString();
             if(statusChange.isEmpty()) {
-                binding.statusChangeBtn.setError("Please Enter a Name");
+                binding.statusChangeBtn.setError("Please Enter a Status");
                 return;
             }
             // Find current user
@@ -81,7 +82,9 @@ public class SettingsActivity extends AppCompatActivity {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 User user = snapshot1.getValue(User.class);
                                 if (user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
+                                    // Update user object with new status
                                     user.setStatus(statusChange);
+                                    // Update database with updated user object
                                     database.getReference()
                                             .child("users")
                                             .child(FirebaseAuth.getInstance().getUid())
@@ -96,7 +99,7 @@ public class SettingsActivity extends AppCompatActivity {
                     });
         });
 
-        // Switches between light and dark theme files
+        // Switch between light and dark theme files
         binding.darkMode.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -104,7 +107,6 @@ public class SettingsActivity extends AppCompatActivity {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
         });
-
     }
 
     // Stop flickers

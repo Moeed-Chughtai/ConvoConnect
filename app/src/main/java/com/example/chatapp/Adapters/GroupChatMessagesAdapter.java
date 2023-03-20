@@ -49,19 +49,24 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Differentiate the viewType as there is the send and receive views
         if(viewType == SEND) {
+            // Links the send sample design to SendViewHolder
             View view = LayoutInflater.from(context).inflate(R.layout.group_send, parent, false);
             return new SendViewHolder(view);
 
         }else {
+            // Links the receive sample design to ReceiverViewHolder
             View view = LayoutInflater.from(context).inflate(R.layout.group_receive, parent, false);
             return new ReceiverViewHolder(view);
         }
     }
 
+    // There are 2 different views so this determine which is required
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
+        // Compares uid of current user and to uid of the sender of message
         if(Objects.equals(FirebaseAuth.getInstance().getUid(), message.getSenderId())) {
             return SEND;
         } else {
@@ -69,6 +74,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
         }
     }
 
+    // Not known which viewHolder is passed through
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         database = FirebaseDatabase.getInstance();
@@ -76,9 +82,12 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
         if(holder.getClass() == SendViewHolder.class) {
             SendViewHolder viewHolder = (SendViewHolder) holder;
 
+            // Set imageView visible if media sent
             if (message.getMessage().equals("media")) {
+                // Make ImageView visible and TextView gone
                 viewHolder.binding.media.setVisibility(View.VISIBLE);
                 viewHolder.binding.message.setVisibility(View.GONE);
+                // Set edit and delete TextViews gone
                 viewHolder.binding.linearLayout2.setVisibility(View.GONE);
                 Glide.with(context)
                         .load(message.getMediaUrl())
@@ -86,6 +95,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                         .into(viewHolder.binding.media);
             }
 
+            // Replace edit with edited if edit has been done
             if (message.getEdited().equals(Boolean.TRUE)) {
                 viewHolder.binding.edit.setVisibility(View.GONE);
                 viewHolder.binding.edited.setVisibility(View.VISIBLE);
@@ -94,6 +104,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                 viewHolder.binding.edited.setVisibility(View.GONE);
             }
 
+            // Replace TextView if msg is deleted
             if (message.getMessage().equals("deleted")) {
                 viewHolder.binding.message.setVisibility(View.GONE);
                 viewHolder.binding.deleted.setVisibility(View.VISIBLE);
@@ -113,13 +124,16 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                 // Display popup
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle("Enter edited message: ");
+                // EditText displayed within the builder
                 final EditText input = new EditText(view.getContext());
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
                 builder.setPositiveButton("OK", (dialogInterface, i) -> {
+                    // Get text from input
                     editedMessage = input.getText().toString();
 
                     if (!editedMessage.equals("")) {
+                        // Update message object
                         message.setEdited(Boolean.TRUE);
                         message.setMessage(editedMessage);
                         // Update message object in database
@@ -137,6 +151,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
 
             viewHolder.binding.delete.setOnClickListener(view -> {
                 message.setMessage("deleted");
+                // Identify deleted messages and remove them from database
                 database.getReference()
                         .child("group_chat_messages")
                         .child(name)
@@ -147,8 +162,8 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
             });
 
         } else {
+            // Must be ReceiveViewHolder
             ReceiverViewHolder viewHolder = (ReceiverViewHolder)holder;
-
             if (message.getMessage().equals("media")) {
                 viewHolder.binding.media.setVisibility(View.VISIBLE);
                 viewHolder.binding.message.setVisibility(View.GONE);
@@ -158,6 +173,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                         .into(viewHolder.binding.media);
             }
 
+            // Replace TextView with edited if message is edited
             if (message.getEdited().equals(Boolean.TRUE)) {
                 viewHolder.binding.edited.setVisibility(View.VISIBLE);
             } else {
@@ -165,6 +181,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
             }
 
             if (message.getMessage().equals("deleted")) {
+                // Replace TextView with deleted message if deleted
                 viewHolder.binding.message.setVisibility(View.GONE);
                 viewHolder.binding.deleted.setVisibility(View.VISIBLE);
                 viewHolder.binding.edited.setVisibility(View.GONE);
@@ -172,6 +189,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
                 if (!message.getMessage().equals("media")) {
                     viewHolder.binding.message.setVisibility(View.VISIBLE);
                     viewHolder.binding.deleted.setVisibility(View.GONE);
+                    // Only show text if not deleted
                     viewHolder.binding.message.setText(message.getMessage());
                 }
             }
@@ -205,6 +223,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
 
         GroupSendBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public SendViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = GroupSendBinding.bind(itemView);
@@ -215,6 +234,7 @@ public class GroupChatMessagesAdapter extends RecyclerView.Adapter {
 
         GroupReceiveBinding binding;
 
+        // Binds the sample data to the RecyclerView
         public ReceiverViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = GroupReceiveBinding.bind(itemView);

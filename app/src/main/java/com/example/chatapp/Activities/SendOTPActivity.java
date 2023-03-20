@@ -41,13 +41,11 @@ public class SendOTPActivity extends AppCompatActivity {
 
         // Creating drop-down menu
         Spinner countryCode = binding.countryCode;
-        // CreateFromResource(within which activity, name of string-array, layout type)
-        // Returns a view for each object in the string-array
+        // Returns a view for each object in the array
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.country_codes, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         countryCode.setAdapter(adapter);
 
-        // View is a rectangular box that responds to user inputs
         binding.getOtpButton.setOnClickListener(v -> {
             if(binding.numberInput.getText().toString().trim().isEmpty()) {
                 Toast.makeText(SendOTPActivity.this, "Enter Phone Number", Toast.LENGTH_SHORT).show();
@@ -79,13 +77,14 @@ public class SendOTPActivity extends AppCompatActivity {
                                             Toast.makeText(SendOTPActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
 
-                                        // Intent is an object used to request action from another activity
+                                        // Code sent to user successfully
                                         @Override
                                         public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                                             binding.progressBar.setVisibility(View.GONE);
                                             binding.getOtpButton.setVisibility(View.VISIBLE);
-                                            // Intent.putExtra sends information to the verifyOTPActivity
+                                            // Intent object used to request to launch next activity
                                             Intent intent = new Intent(getApplicationContext(), VerifyOTPActivity.class);
+                                            // Sends information to next activity
                                             intent.putExtra("phoneNumber", binding.numberInput.getText().toString());
                                             intent.putExtra("verificationId", verificationId);
                                             intent.putExtra("selectedCode", selectedCode);

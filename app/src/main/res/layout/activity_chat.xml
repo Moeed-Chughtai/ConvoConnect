@@ -76,6 +76,7 @@
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- CardView widget provides a rounded corner layout along with a specific elevation -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"
@@ -127,6 +128,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Recyclers elements to provide dynamic lists -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"

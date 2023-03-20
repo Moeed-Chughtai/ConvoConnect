@@ -15,6 +15,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <!-- Plugin to create circular ImageView -->
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_picture"
             android:layout_width="220dp"
